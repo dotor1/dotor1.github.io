@@ -645,6 +645,8 @@ class c_scr_ox{
 	//this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
 	//}}{{
 	el_touchmove(p_event){
+		p_event.preventDefault();
+		
 		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
 		let standard_y = document.getElementById('svg_wrapper').offsetTop;
 		//debugger;
@@ -667,6 +669,7 @@ class c_scr_ox{
 		
 		let tmp_obj = g_trg.pC;
 		tmp_obj.update_position(vbxy.x,vbxy.y,ct_xy.x,ct_xy.y);	
+		
 		
 	}
 	
