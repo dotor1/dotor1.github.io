@@ -645,7 +645,7 @@ class c_scr_ox{
 	//this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
 	//}}{{
 	el_touchmove(p_event){
-		window.blockMenuHeaderScroll = ture;
+		//window.blockMenuHeaderScroll = ture;
 		p_event.preventDefault();
 		
 		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
