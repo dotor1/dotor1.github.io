@@ -1,0 +1,251 @@
+/* 주석 */
+
+/* Grid Syle */
+.c_grid{
+	stroke:			rgb(172,165,165); 		/* 선 색깔 */
+	stroke-width:	1;					/* 선 굵기 */
+}
+
+/* Axis */	
+.c_axis{
+	/* stroke:			rgb(0,0,255); */
+	/* stroke:			rgb(158,158,158);	*/
+	/* stroke:			rgb(120,120,120);	*/
+	/* stroke:			rgb(254,129,62);	*/
+	stroke:			rgb(0,118,144);	
+	stroke-width:	1;
+}
+
+/* point hit area */
+.c_point_hit_area{
+	stroke:			red;	/* 'black'로 하면 안먹음 */
+	stroke-width:	1;
+	fill:			blue;
+	/*
+	fill-opacity:	0.3;
+	*/
+	fill-opacity:	0;
+	stroke-opacity:	0;
+	cursor:			pointer;
+}	
+
+/* point hit area - mouse over */
+.c_pha_mouseover{
+	fill-opacity:	0.1;
+	stroke-opacity:	0.1;
+}
+
+/* point hit area - mouse over */
+.c_pha_mouseout{
+	fill-opacity:	0;
+	stroke-opacity:	0;
+}
+
+/* point hit area - drag */
+.c_pha_draging{
+	fill-opacity:	0.3;
+	stroke-opacity:	0.3;
+}
+
+.c_points{
+	stroke:			black;	/* 'black'로 하면 안먹음(literal 안됨) */
+	stroke-width:	1;
+	fill:			black;
+}	
+
+.c_tools{
+	stroke-opacity:	0;
+	stroke:			black;	/* 'black'로 하면 안먹음(literal 안됨) */
+	stroke-width:	1;
+	fill:			gray;
+}
+
+.c_grid_icon{
+	stroke-opacity:	1;
+	stroke:			black;	/* 'black'로 하면 안먹음(literal 안됨) */
+	stroke-width:	2;
+	fill:			none;
+}
+
+.c_tools_on{
+	fill:			red;
+}	
+
+/* */
+.c_symbol_text{
+	text-anchor:		middle;
+	dominant-baseline:	middle;
+	fill:				black;
+	
+	/* font */
+	font-family:	Lucida Console;
+	font-size:		15px;	
+	
+	/* 선택 안되게 하기 */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;	
+	
+}
+
+/* */
+.c_path{
+	/* stroke:			rgb(255,0,0);*/		/* 선 색깔 */
+	/* stroke:			black; */
+	/* stroke:			rgb(255,0,0); */
+	stroke:			rgb(65,78,105); 
+	stroke-width:	2;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg{
+	stroke:			rgb(0,255,0);
+	stroke-width:	5;					/* 선 굵기 */
+}
+
+.bg2{
+	stroke:			rgb(0,255,0);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg3{
+	stroke:			rgb(0,0,255);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg_blue{
+	stroke:			rgb(0,0,255);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+	stroke-opacity:	0.3;
+}
+
+.bg_fill_magenta{
+	/*
+	stroke:			rgb(255,0,255);
+	fill:			rgb(255,0,255);
+	*/
+	
+	/*
+	stroke:			rgb(249,178,243);
+	fill:			rgb(249,178,243);
+	*/
+
+	stroke:			rgb(247,158,240);
+	fill:			rgb(247,158,240);
+
+	
+	stroke-width:	1;					/* 선 굵기 */
+	fill-opacity:	0.3;
+	stroke-opacity:	0.3;
+}
+
+.bg_fill_sky{
+	stroke:			rgb(192,255,255);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			rgb(192,255,255);
+	fill-opacity:	0.3;
+	stroke-opacity:	0.3;
+}
+
+.bg_red{
+	stroke:			rgb(255,0,0);
+	stroke-width:	2;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg_len_arc{
+	stroke-dasharray:5 1;
+	stroke:			rgb(98,64,191);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg_len_feature{
+	/* stroke:			rgb(193,0,55); */
+	stroke:			rgb(255,0,0); 
+	stroke-width:	2;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg4{
+	stroke:			rgb(0,255,255);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg5{
+	stroke:			rgb(255,0,255);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg6{
+	stroke:			rgb(255,0,0);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg_black{
+	stroke:			rgb(0,0,0);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}
+
+.bg_gray{
+	stroke:			rgb(100,100,100);
+	stroke-width:	1;					/* 선 굵기 */
+	fill:			none;
+}	
+
+.c1{
+	stroke:			rgb(255,0,0);
+	stroke-width:	1;
+	fill:			rgb(255,255,0);	/*빨강,녹색 -> 노랑 */
+	fill-opacity:	0.3;
+	stroke-opacity:	1;				
+}
+
+.line_symbol_rect_debug{
+	stroke:			rgb(255,0,0);
+	stroke-width:	1;
+	fill:			rgb(255,255,0);	/*빨강,녹색 -> 노랑 */
+	fill-opacity:	0.3;
+	stroke-opacity:	1;				
+}
+
+.line_symbol_rect{
+	stroke:			rgb(255,0,0);
+	stroke-width:	1;
+	stroke-opacity:	0;		
+	fill:			none;	
+}
+
+/*
+.line_arc{
+	stroke-dasharray:5 1;
+	stroke:			rgb(255,0,0);
+	stroke-width:	1;
+	fill:			none;
+	stroke-opacity:	0;				
+}
+*/
+
+
+
+.t9{
+	fill:			rgb(255,0,0);	/*빨강,녹색 -> 노랑 */
+	/* font-family:	consolas; */
+	font-family:	Lucida Console;
+	font-size:		15px;
+}	
+
+.c_imsi{
+	stroke:			red;	/* 'black'로 하면 안먹음 */
+	stroke-width:	1;
+}	
