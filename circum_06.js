@@ -4336,10 +4336,10 @@ function init_scs(){
 	let cstmz = {
 		//width:480,
 		//height:480,
-		width:400,
-		height:400,
-		//width:800,
-		//height:800,
+		//width:400,
+		//height:400,
+		width:800,
+		height:800,
 		
 		
 		pixelsPerOne:100,	//1은 몇 pixel인가
