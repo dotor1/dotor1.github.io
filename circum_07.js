@@ -646,7 +646,7 @@ class c_scr_ox{
 	//}}{{
 	el_touchmove(p_event){
 		//window.blockMenuHeaderScroll = ture;
-		p_event.preventDefault();
+		
 		
 		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
 		let standard_y = document.getElementById('svg_wrapper').offsetTop;
@@ -671,7 +671,7 @@ class c_scr_ox{
 		let tmp_obj = g_trg.pC;
 		tmp_obj.update_position(vbxy.x,vbxy.y,ct_xy.x,ct_xy.y);	
 		
-		
+		p_event.preventDefault();
 	}
 	
 	el_touchend(p_event){
