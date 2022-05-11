@@ -4752,6 +4752,7 @@ function initialize_routine(){
 	
 	g_trg = new c_triangle(gscr,A_xy.x,A_xy.y,B_xy.x,B_xy.y,C_xy.x,C_xy.y);
 	
+	info_update('0808: ' + String(window.devicePixelRatio));
 }	
 
 function initialize_routine_v5(){
