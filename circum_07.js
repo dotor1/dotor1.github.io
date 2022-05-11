@@ -120,6 +120,8 @@ class c_scr_ox{
 	
 	platform = null;
 	
+	touch_obj = null;
+	
 	constructor(){
 		
 	}
@@ -398,6 +400,7 @@ class c_scr_ox{
 		
 		//{{mobile chrome
 		this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
+		this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) );
 		this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
 		//}}mobile chrome
 		
@@ -645,8 +648,10 @@ class c_scr_ox{
 	//this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
 	//}}{{
 	el_touchmove(p_event){
-		//window.blockMenuHeaderScroll = ture;
-		
+		if( this.touch_obj == null){
+			return;
+		}
+		p_event.preventDefault();
 		
 		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
 		let standard_y = document.getElementById('svg_wrapper').offsetTop;
@@ -662,21 +667,45 @@ class c_scr_ox{
 		console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
 		//
 		//debugger;
-		
-		
+				
 		let vbxy = this.scr_to_vb(offsetX,offsetY);
 		
-		let ct_xy = this.vb2ct( vbxy.x, vbxy.y );
+		//magnetic grid mode인 경우에는 값을 보정
+		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
+		let vb_x = vb_magnet.x;
+		let vb_y = vb_magnet.y;		
 		
-		let tmp_obj = g_trg.pC;
-		tmp_obj.update_position(vbxy.x,vbxy.y,ct_xy.x,ct_xy.y);	
+		let ct_xy = this.vb2ct( vb_x, vb_y );
 		
-		p_event.preventDefault();
+		//let tmp_obj = g_trg.pC;
+		this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+		
 	}
 	
 	el_touchend(p_event){
-		console.log( String(this.debug_cnt++) + 'touch - end' );
+		//console.log( String(this.debug_cnt++) + 'touch - end' );
+		this.touch_obj = null;
 	}	
+	
+	el_touchstart(p_event){
+		//console.log( String(this.debug_cnt++) + 'touch - start' );
+		//console.log( p_event.target );
+		
+		let e_id = p_event.target.getAttribute('id');
+		//console.log( eid );
+		
+		if( e_id == 'ha_A'){
+			this.touch_obj = g_trg.pA;
+		}
+		else if( e_id == 'ha_B'){
+			this.touch_obj = g_trg.pB;
+		}
+		else if( e_id == 'ha_C'){
+			this.touch_obj = g_trg.pC;
+		}		
+		
+		
+	}		
 	//}}
 	
 	el_mousedown(p_event){
@@ -1837,12 +1866,14 @@ class c_point{
 		let imsi = document.createElementNS(SVG_NS,'g');
 		this.imsi = imsi;
 		imsi.setAttribute('id','my_imsi');
+		//imsi.setAttribute('id','ha_' + this.symbol);
 		imsi.setAttribute('class','c_imsi');
 		hit_layer.appendChild(imsi);
 
 		if( this.interactive ){			
 			this.hit_area = document.createElementNS(SVG_NS,'circle')
-			this.hit_area.setAttribute('id','testtest');
+			//this.hit_area.setAttribute('id','testtest');
+			this.hit_area.setAttribute('id','ha_' + this.symbol);
 
 			this.hit_area.setAttribute('cx',0);
 			this.hit_area.setAttribute('cy',0);				
