@@ -122,14 +122,52 @@ class c_scr_ox{
 	//touch_obj = null;
 	//}}
 	
-	config_obj = null;
+	conf = null;
 	
 	constructor(){
-		
 	}
 	
 	init2(p_config){
-		this.config_obj = null;
+		this.conf = p_config;
+		
+		//		
+		this.conf.e_div = document.getElementById( this.conf.inpt_div_name );
+		this.conf.e_div.setAttribute('style','background:transparent;');	
+		
+		//
+		this.conf.e_svg = document.createElementNS(SVG_NS,'svg');		
+		this.conf.e_svg.setAttribute('xmlns' , SVG_NS);	//namespace 		
+		this.conf.e_svg.setAttribute('width' , this.conf.inpt_width  );	
+		this.conf.e_svg.setAttribute('height', this.conf.inpt_height );	
+		this.conf.e_div.appendChild(this.conf.e_svg);
+		
+		debugger;
+		
+		////
+		//if( this.platform.desktop){	
+		//	this._element_width  = p_width;
+		//	this._element_height = p_height;
+		//}
+		//else{
+		//	this._element_width  = 2*p_width;
+		//	this._element_height = 2*p_height;			
+		//}
+		//
+		//this._element.setAttribute('width',this._element_width);
+		//this._element.setAttribute('height',this._element_height);		
+		////
+		
+		//this._element_name = p_name;
+		//this._element = document.getElementById(p_name);
+		//
+		//this.layer_grid = document.createElementNS(SVG_NS,'g');		
+		//	
+		//this._element.setAttribute('xmlns',SVG_NS);	//namespace 		
+		
+		debugger;
+			
+		//this._element.setAttribute('xmlns',SVG_NS);	//namespace 		
+		
 	}
 	
 	//init(p_name){
@@ -143,6 +181,8 @@ class c_scr_ox{
 		p_origin_x,
 		p_origin_y){
 		
+		
+		
 		//
 		this.platform = new c_platform();
 
@@ -152,8 +192,10 @@ class c_scr_ox{
 			this._ct_y_pixels = p_pixelsPerOne;
 		}
 		else{
-			this._ct_x_pixels = 2*p_pixelsPerOne;
-			this._ct_y_pixels = 2*p_pixelsPerOne;			
+			//this._ct_x_pixels = 2*p_pixelsPerOne;
+			//this._ct_y_pixels = 2*p_pixelsPerOne;			
+			this._ct_x_pixels = p_pixelsPerOne;
+			this._ct_y_pixels = p_pixelsPerOne;			
 		}
 		
 		this._vb_x_grid_size = parseInt(this._ct_x_pixels * p_gridSize);
@@ -190,8 +232,10 @@ class c_scr_ox{
 			this._element_height = p_height;
 		}
 		else{
-			this._element_width  = 2*p_width;
-			this._element_height = 2*p_height;			
+			//this._element_width  = 2*p_width;
+			//this._element_height = 2*p_height;			
+			this._element_width  = p_width;
+			this._element_height = p_height;			
 		}
 		
 		this._element.setAttribute('width',this._element_width);
@@ -4521,7 +4565,15 @@ class c_triangle{
 
 ////////////////////////////////////////////////////////
 class c_config{
+	//제어용
 	platform = null;
+	
+	e_div = null;
+	e_svg = null;
+
+	
+	//입력받아야 하는
+	inpt_div_name = '';
 	
 	constructor(){
 		this.platform = new c_platform();
@@ -4608,6 +4660,9 @@ let g_config = null;
 function init_scs(){
 	
 	let g_config = new c_config();
+	g_config.inpt_div_name = 'svg_wrapper';
+	g_config.inpt_width    = 400;
+	g_config.inpt_height   = 400;
 	
 	//customzing
 	let cstmz = {
@@ -4636,6 +4691,10 @@ function init_scs(){
 	//const ORIGIN_CENTER = 1;	
 	
 	gscr = new c_scr_ox();
+	//{{debug
+	//gscr.init2(g_config);
+	//}}debug
+	
 	gscr.init('mysvg',
 		cstmz.width,
 		cstmz.height,
