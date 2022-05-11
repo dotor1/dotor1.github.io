@@ -130,6 +130,8 @@ class c_scr_ox{
 	init2(p_config){
 		this.conf = p_config;
 		
+		return;
+		
 		//		
 		this.conf.e_div = document.getElementById( this.conf.inpt_div_name );
 		this.conf.e_div.setAttribute('style','background:transparent;');	
@@ -181,6 +183,10 @@ class c_scr_ox{
 		p_origin_x,
 		p_origin_y){
 		
+		//
+		//current_zoom = webView.getScale() * 100;
+		//zoom = Math.round(zoom_x);
+		//webView.setInitialScale(zoom);		
 		
 		
 		//
@@ -194,8 +200,12 @@ class c_scr_ox{
 		else{
 			//this._ct_x_pixels = 2*p_pixelsPerOne;
 			//this._ct_y_pixels = 2*p_pixelsPerOne;			
-			this._ct_x_pixels = p_pixelsPerOne;
-			this._ct_y_pixels = p_pixelsPerOne;			
+			//this._ct_x_pixels = p_pixelsPerOne;
+			//this._ct_y_pixels = p_pixelsPerOne;			
+			//debugger;
+			this._ct_x_pixels = p_pixelsPerOne * this.conf.ratio;
+			this._ct_y_pixels = this._ct_x_pixels;
+			
 		}
 		
 		this._vb_x_grid_size = parseInt(this._ct_x_pixels * p_gridSize);
@@ -234,8 +244,10 @@ class c_scr_ox{
 		else{
 			//this._element_width  = 2*p_width;
 			//this._element_height = 2*p_height;			
-			this._element_width  = p_width;
-			this._element_height = p_height;			
+			//this._element_width  = p_width;
+			//this._element_height = p_height;			
+			this._element_width  =  p_width  * this.conf.ratio;
+			this._element_height =  p_height * this.conf.ratio;
 		}
 		
 		this._element.setAttribute('width',this._element_width);
@@ -4567,7 +4579,8 @@ class c_triangle{
 class c_config{
 	//제어용
 	platform = null;
-	
+	ratio = 2;
+		
 	e_div = null;
 	e_svg = null;
 
@@ -4577,6 +4590,12 @@ class c_config{
 	
 	constructor(){
 		this.platform = new c_platform();
+		
+		//debugger
+		//ratio = window.
+		
+		//기종에 따라서, 결국 달라져야 하는 것은 ratio임
+		
 		info_update('scr size:' + String(this.platform.width) + ' x ' + String(this.platform.height) );
 	}
 	
@@ -4659,7 +4678,22 @@ let g_config = null;
 
 function init_scs(){
 	
-	let g_config = new c_config();
+	//반응영역의 크기(desktop기준)
+	let scr_config={
+		radius:100,
+		r2:100
+	}
+	
+	let env={
+		div_name:'svg_wrapper',
+		width:400,
+		height:400,
+		
+		mobile_width:400,
+		
+	}
+	
+	g_config = new c_config();
 	g_config.inpt_div_name = 'svg_wrapper';
 	g_config.inpt_width    = 400;
 	g_config.inpt_height   = 400;
@@ -4668,6 +4702,8 @@ function init_scs(){
 	let cstmz = {
 		//width:480,
 		//height:480,
+		//width:400,
+		//width:408,
 		width:400,
 		height:400,
 		//width:800,
@@ -4692,7 +4728,7 @@ function init_scs(){
 	
 	gscr = new c_scr_ox();
 	//{{debug
-	//gscr.init2(g_config);
+	gscr.init2(g_config);
 	//}}debug
 	
 	gscr.init('mysvg',
@@ -4726,8 +4762,7 @@ function init_bg(){
 	bg_circle.setAttribute('r',R_vb.x);
 	bg_layer.appendChild(bg_circle);	
 	
-	//debugger;
-	
+
 }
 
 
@@ -4752,7 +4787,15 @@ function initialize_routine(){
 	
 	g_trg = new c_triangle(gscr,A_xy.x,A_xy.y,B_xy.x,B_xy.y,C_xy.x,C_xy.y);
 	
-	info_update('0808: ' + String(window.devicePixelRatio));
+	//debugger;
+	let str = '';
+	str += '08:49 ';
+	str += '<br>';
+	str += 'scr size:' + String(g_config.platform.width) + ' x ' + String(g_config.platform.height);
+	str += '<BR>';
+	str += 'devicePixelRatio: ' + String(window.devicePixelRatio) ;
+		
+	info_update(str);	
 }	
 
 function initialize_routine_v5(){
@@ -6050,5 +6093,6 @@ function isFloat(n){
 }
 
 function info_update(p_text){
-	document.getElementById('info').innerText = p_text;
+	//document.getElementById('info').innerText = p_text;
+	document.getElementById('info').innerHTML = p_text;
 }
