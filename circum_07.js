@@ -120,7 +120,9 @@ class c_scr_ox{
 	
 	platform = null;
 	
-	touch_obj = null;
+	//{{drag object를 이용하면 됨 - 불필요
+	//touch_obj = null;
+	//}}
 	
 	constructor(){
 		
@@ -400,7 +402,7 @@ class c_scr_ox{
 		
 		//{{mobile chrome
 		this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
-		this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) );
+		//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //이건 점에다가 건다
 		this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
 		//}}mobile chrome
 		
@@ -643,70 +645,31 @@ class c_scr_ox{
 		}
 	}	
 
-	//{{
-	//this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
-	//this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
-	//}}{{
-	el_touchmove(p_event){
-		if( this.touch_obj == null){
-			return;
-		}
-		p_event.preventDefault();
-		
-		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
-		let standard_y = document.getElementById('svg_wrapper').offsetTop;
-		//debugger;
-		
-		//let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
-		//let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
 
-		let offsetX = p_event.touches[0].pageX - standard_x;
-		let offsetY = p_event.touches[0].pageY - standard_y;
-		
-		//
-		console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
-		//
-		//debugger;
-				
-		let vbxy = this.scr_to_vb(offsetX,offsetY);
-		
-		//magnetic grid mode인 경우에는 값을 보정
-		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
-		let vb_x = vb_magnet.x;
-		let vb_y = vb_magnet.y;		
-		
-		let ct_xy = this.vb2ct( vb_x, vb_y );
-		
-		//let tmp_obj = g_trg.pC;
-		this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
-		
-	}
 	
-	el_touchend(p_event){
-		//console.log( String(this.debug_cnt++) + 'touch - end' );
-		this.touch_obj = null;
-	}	
+
 	
-	el_touchstart(p_event){
-		//console.log( String(this.debug_cnt++) + 'touch - start' );
-		//console.log( p_event.target );
-		
-		let e_id = p_event.target.getAttribute('id');
-		//console.log( eid );
-		
-		if( e_id == 'ha_A'){
-			this.touch_obj = g_trg.pA;
-		}
-		else if( e_id == 'ha_B'){
-			this.touch_obj = g_trg.pB;
-		}
-		else if( e_id == 'ha_C'){
-			this.touch_obj = g_trg.pC;
-		}		
-		
-		
-	}		
-	//}}
+	////{{각 점에서 touchstart 시작시킴
+	//el_touchstart(p_event){
+	//	console.log( String(this.debug_cnt++) + '] touch - start' );
+	//	//console.log( p_event.target );
+	//	
+	//	let e_id = p_event.target.getAttribute('id');
+	//	//console.log( eid );
+	//	
+	//	if( e_id == 'ha_A'){
+	//		this.touch_obj = g_trg.pA;
+	//	}
+	//	else if( e_id == 'ha_B'){
+	//		this.touch_obj = g_trg.pB;
+	//	}
+	//	else if( e_id == 'ha_C'){
+	//		this.touch_obj = g_trg.pC;
+	//	}		
+	//	
+	//	
+	//}		
+	////}}
 	
 	el_mousedown(p_event){
 		//wheel을 누른 거에만 반응 
@@ -725,6 +688,7 @@ class c_scr_ox{
 		}
 	}
 	
+
 	
 	el_mouseup(p_event){
 		//{{
@@ -761,7 +725,8 @@ class c_scr_ox{
 		//drag 중이였을 때, 'drag종료처리'
 		if( p_event.which == 1 ){	//when mouse left button clicked
 			if( this.drag_ing ){
-				console.log('ing - the end');
+				//debugger;
+				console.log('Drag - the end');
 				//console.log( p_event );
 				this.drag_ing = false;
 				
@@ -775,6 +740,29 @@ class c_scr_ox{
 		//}}
 		
 	}
+	
+	//{{
+	//el_touchend_v1(p_event){
+	//	console.log( String(this.debug_cnt++) + '] touch - end' );
+	//	this.touch_obj = null;
+	//}		
+	//}}
+
+	el_touchend(p_event){
+		if( this.drag_ing ){
+			//debugger;
+			console.log( String(this.debug_cnt++) + '] touch - end' );
+			//console.log( p_event );
+			this.drag_ing = false;
+			
+			this.drag_obj.cb_mouseup();
+			this.drag_obj = null;
+			
+			//this.drag_obj.update_position();
+		}		
+			
+	}		
+	
 	
 	//}}mouse_pointer_vb_xy2로 변경
 	//mouse_pointer_vb_xy(p_evt){
@@ -841,9 +829,93 @@ class c_scr_ox{
 		
 	}	
 	
+	////{{
+	//el_touchmove_v1(p_event){
+	//	//console.log('el_touchmove');
+	//	
+	//	if( this.touch_obj == null){
+	//		return;
+	//	}
+	//	p_event.preventDefault();
+	//	
+	//	let standard_x = document.getElementById('svg_wrapper').offsetLeft;
+	//	let standard_y = document.getElementById('svg_wrapper').offsetTop;
+	//	//debugger;
+	//	
+	//	//let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
+	//	//let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
+	//
+	//	let offsetX = p_event.touches[0].pageX - standard_x;
+	//	let offsetY = p_event.touches[0].pageY - standard_y;
+	//	
+	//	//
+	//	console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
+	//	//
+	//	//debugger;
+	//			
+	//	let vbxy = this.scr_to_vb(offsetX,offsetY);
+	//	
+	//	//magnetic grid mode인 경우에는 값을 보정
+	//	let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
+	//	let vb_x = vb_magnet.x;
+	//	let vb_y = vb_magnet.y;		
+	//	
+	//	let ct_xy = this.vb2ct( vb_x, vb_y );
+	//	
+	//	//let tmp_obj = g_trg.pC;
+	//	this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+	//}	
+	////}}
+	
+	//el_mousemove와 동일로직
+	el_touchmove(p_event){
+		if( !this.drag_ing){
+			return;
+		}
+		
+		p_event.preventDefault();
+		
+		
+		////console.log('el_touchmove');
+		//
+		//if( this.touch_obj == null){
+		//	return;
+		//}
+		//p_event.preventDefault();
+		
+		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
+		let standard_y = document.getElementById('svg_wrapper').offsetTop;
+		
+		//debugger;
+		
+		//let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
+		//let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
+
+		let offsetX = p_event.touches[0].pageX - standard_x;
+		let offsetY = p_event.touches[0].pageY - standard_y;
+		
+		//
+		console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
+		//
+		//debugger;
+				
+		let vbxy = this.scr_to_vb(offsetX,offsetY);
+		
+		//magnetic grid mode인 경우에는 값을 보정
+		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
+		let vb_x = vb_magnet.x;
+		let vb_y = vb_magnet.y;		
+		
+		let ct_xy = this.vb2ct( vb_x, vb_y );
+		
+		//let tmp_obj = g_trg.pC;
+		//this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+		this.drag_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+	}		
+	
 	el_mousemove(p_event){
 		//{{debug 
-		info_update(String(this.debug_cnt++) + 'mouse move');
+		//info_update(String(this.debug_cnt++) + 'mouse move');
 		//}}debug 
 		
 		//drag 중일 때
@@ -1925,6 +1997,10 @@ class c_point{
 			
 			this.hit_area.addEventListener('mouseover',(e)=>this.el_mouseover(e) );
 			this.hit_area.addEventListener('mouseout',(e)=>this.el_mouseout(e) );
+			
+			//{{
+			this.hit_area.addEventListener('touchstart',(e)=>this.el_touchstart(e) );	
+			//}}
 		}
 		
 		////
@@ -2050,6 +2126,25 @@ class c_point{
 		this.imsi.setAttribute('class','c_pha_draging');
 	}
 	
+	
+	//el_mousedown과 동일로직
+	el_touchstart(p_event){
+		//console.log('[Point] touch - start');
+		p_event.preventDefault();
+		
+		if( this.ct.register_drag_object(this) ){
+			this.mouse_drag_ing();
+			this.drag_ing = true;
+			
+			//{{
+			//document.getElementById('info').innerText = '18';
+			//}}{{
+			console.log('[point] - touch start');
+			info_update('point mouse down 정상작동');
+			//}}
+		}		
+		
+	}
 
 	el_mousedown(p_event){
 		if(p_event.buttons == 1){
@@ -2062,6 +2157,7 @@ class c_point{
 				//{{
 				//document.getElementById('info').innerText = '18';
 				//}}{{
+				console.log('point - mouse down');
 				info_update('point mouse down 정상작동');
 				//}}
 			}
@@ -2071,7 +2167,14 @@ class c_point{
 	
 	cb_mouseup(){
 		this.drag_ing = false;
-		this.imsi.setAttribute('class','c_pha_mouseover');
+		
+		if( this.ct.platform.desktop ){
+			this.imsi.setAttribute('class','c_pha_mouseover');
+		}
+		else if( this.ct.platform.mobile ){
+			//mobile은 mouse pointer가 없음
+			this.imsi.setAttribute('class','c_pha_mouseout');
+		}
 	}
 	
 }	
@@ -5726,33 +5829,33 @@ function valid_digit_test(){
 
 function display_number(p_num){
 	if( isInt(p_num) ){
-		console.log('정수입니다.');
+		//console.log('정수입니다.');
 		return p_num;
 	}
 	
-	console.log('정수 no no no');
+	//console.log('정수 no no no');
 	
 	let num = p_num;
 	
 	let int_num = parseInt(num);
-	console.log('정수 : ',int_num);
+	//console.log('정수 : ',int_num);
 	
 	let str_int = int_num.toString();
-	console.log('str_int : ', str_int);
+	//console.log('str_int : ', str_int);
 	
 	//let str_int_cnt = str_int.length;
 	//console.log('str_int_cnt : ' , str_int_cnt);
 	
 	let str_num = num.toString();
-	console.log( 'str_num : ', str_num );
+	//console.log( 'str_num : ', str_num );
 	
 	//let str_sosubu = str_num.substring(0,str_num.length);
 	let str_sosubu = str_num.substring(str_int.length+1,str_num.length);
-	console.log( 'str_sosubu : ', str_sosubu);
+	//console.log( 'str_sosubu : ', str_sosubu);
 	
 	if(str_sosubu.length > 3){
 		num = Math.round((num + Number.EPSILON) * 1000) / 1000;
-		console.log('변형 : ', num);
+		//console.log('변형 : ', num);
 	}
 	
 	return num;
