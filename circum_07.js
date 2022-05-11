@@ -306,6 +306,13 @@ class c_scr_ox{
 		this._element.appendChild(this.layer_tools);		
 		
 		this.layer_tools_scale = document.createElementNS(SVG_NS,'g');	//scale 
+		
+		if( this.platform.desktop ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		}
+		else if( this.platform.mobile ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(2*this._vb_scale_x) + ')' );		
+		}
 		this.layer_tools.appendChild(this.layer_tools_scale);				
 		
 		//magnet
@@ -1069,7 +1076,14 @@ class c_scr_ox{
 		this._vb_scale_x = Math.pow(2,this._vb_scale_factor);
 		this._vb_scale_y = this._vb_scale_x;
 
-		this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		//this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+
+		if( this.platform.desktop ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		}
+		else if( this.platform.mobile ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(2*this._vb_scale_x) + ')' );		
+		}		
 		//}}
 		
 		this._vb_curr_oX = p_scr_x - (delta_x / this._vb_scale_x);
@@ -1108,7 +1122,15 @@ class c_scr_ox{
 		this._vb_scale_x = Math.pow(2,this._vb_scale_factor);
 		this._vb_scale_y = this._vb_scale_x
 		
-		this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );
+		//this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );
+
+		if( this.platform.desktop ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		}
+		else if( this.platform.mobile ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(2*this._vb_scale_x) + ')' );		
+		}
+		
 		//}}
 			
 		
@@ -2793,9 +2815,14 @@ class c_line{
 			}
 		}		
 		////////////////////////////////////////////////////////////////////
-		
+		let dist1 = 0;
 		//약간 문제 
-		let dist1 = dist( vp[0].x, vp[0].y, this.pA.ct_x, this.pA.ct_y);
+		try{
+			dist1 = dist( vp[0].x, vp[0].y, this.pA.ct_x, this.pA.ct_y);
+		}
+		catch(error){
+			//debugger;
+		}
 		let dist2 = dist( vp[1].x, vp[1].y, this.pA.ct_x, this.pA.ct_y);
 		
 		if( dist1 <= dist2){
