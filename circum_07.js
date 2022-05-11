@@ -1,7 +1,5 @@
 ////////////////////////////////////////////////////////
 
-function scr_coordinate____________________(){}
-
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const ORIGIN_USERDEFINED = 0;
@@ -124,8 +122,14 @@ class c_scr_ox{
 	//touch_obj = null;
 	//}}
 	
+	config_obj = null;
+	
 	constructor(){
 		
+	}
+	
+	init2(p_config){
+		this.config_obj = null;
 	}
 	
 	//init(p_name){
@@ -407,11 +411,15 @@ class c_scr_ox{
 		this._element.addEventListener('mouseleave',(e)=>this.el_mouseleave(e) );	//svg가 mouse pointer가 올라올 때		
 		this._element.addEventListener('mouseenter',(e)=>this.el_mouseenter(e) );		
 		
-		//{{mobile chrome
-		this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
-		//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //이건 점에다가 건다
-		this._element.addEventListener('touchend', (e)=>this.el_touchend(e) );
-		//}}mobile chrome
+		
+		//cell phone drag evt
+		if( this.platform.mobile ){
+			//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //'점'에서 touch start
+			this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
+			this._element.addEventListener('touchend', 	(e)=>this.el_touchend(e)  );
+		}
+		
+
 		
 	}
 	
@@ -876,7 +884,7 @@ class c_scr_ox{
 	
 	//el_mousemove와 동일로직
 	el_touchmove(p_event){
-		if( !this.drag_ing){
+		if( !this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
 			return;
 		}
 		
@@ -1534,20 +1542,6 @@ class c_platform{
 }
 
 ////////////////////////////////////////////////////////
-function c_point2(){
-	this.blah = 'blah';
-	this.blahblah = 'blahblah';
-}
-
-c_point2.prototype = {
-	introduce: function(){
-		console.log(this.blah);
-	}
-}	
-
-
-////////////////////////////////////////////////////////
-function symbol____________________(){}
 
 const DELTA_DISTANCE = 15;		//점 반지름
 const UPRIGHT = 1;
@@ -1833,7 +1827,6 @@ class c_line_symbol{
 
 
 ////////////////////////////////////////////////////////
-function angle_symbol______________(){}
 
 class c_angle_symbol{
 	symbol = '';
@@ -1886,7 +1879,6 @@ class c_angle_symbol{
 }
 
 ////////////////////////////////////////////////////////
-function point____________________(){}
 
 const HIT_AREA_R = 50;	//반응영역 반지름
 const POINT_R = 4;		//점 반지름
@@ -2202,7 +2194,6 @@ class c_point{
 }	
 
 ////////////////////////////////////////////////////////
-function line____________________(){}
 
 const CW  = 0;
 const CCW = 1;
@@ -3342,7 +3333,6 @@ class c_line_old{
 }
 
 ////////////////////////////////////////////////////////
-function angle__________________(){}
 
 //const ANGLE_R = 0.3;		//점 반지름
 const ANGLE_R = 0.3;		//점 반지름
@@ -4528,9 +4518,35 @@ class c_triangle{
 	}//update
 	
 }
+
+////////////////////////////////////////////////////////
+class c_config{
+	platform = null;
+	
+	constructor(){
+		this.platform = new c_platform();
+		info_update('scr size:' + String(this.platform.width) + ' x ' + String(this.platform.height) );
+	}
+	
+}
+
+////////////////////////////////////////////////////////
+function c_point2(){
+	this.blah = 'blah';
+	this.blahblah = 'blahblah';
+}
+
+c_point2.prototype = {
+	introduce: function(){
+		console.log(this.blah);
+	}
+}	
+
 	
 
 ////////////////////////////////////////////////////////
+
+function gvar_________________________(){}
 
 let gscr = null;
 let point_A = null;
@@ -4587,8 +4603,12 @@ let BB=null;
 
 let g_trg = null;
 
+let g_config = null;
 
 function init_scs(){
+	
+	let g_config = new c_config();
+	
 	//customzing
 	let cstmz = {
 		//width:480,
@@ -4651,7 +4671,9 @@ function init_bg(){
 	
 }
 
-function init____________________________(){}
+
+
+
 
 
 function initialize_routine(){
