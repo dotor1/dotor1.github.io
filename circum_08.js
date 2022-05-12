@@ -4579,7 +4579,7 @@ class c_triangle{
 class c_config{
 	//제어용
 	platform = null;
-	ratio = 2;
+	ratio = 1;
 		
 	e_div = null;
 	e_svg = null;
