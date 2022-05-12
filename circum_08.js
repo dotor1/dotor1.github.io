@@ -114,6 +114,10 @@ class c_scr_ox{
 	
 	grid_mode = true;
 	
+	pan_mode = false;	//view move
+	//pan_mode = true;	//view move
+	tool_pan = null;
+	
 	debug_cnt = 0;
 	
 	platform = null;
@@ -176,13 +180,15 @@ class c_scr_ox{
 		this.tool_magnet          = this.conf.tool_magnet;
 		this.layer_tools_grid_translate = this.conf.layer_tools_grid_translate;
 		this.tool_grid            = this.conf.tool_grid;
-
+		this.tool_pan             = this.conf.tool_pan;
+		
 		this.X_axis               = this.conf.X_axis;
 		this.Y_axis               = this.conf.Y_axis;
 		
 		//
 		this.tool_magnet.addEventListener('click', (e)=>this.el_magnet_click(e) );	
 		this.tool_grid.addEventListener('click', (e)=>this.el_grid_click(e) );
+		this.tool_pan.addEventListener('click', (e)=>this.el_pan_click(e) );
 		
 		
 		//event 등록
@@ -201,7 +207,12 @@ class c_scr_ox{
 		
 		//cell phone drag evt
 		if( this.conf.mobile ){
+			//{{ pan mode 
 			//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //'점'에서 touch start
+			//}}{{
+			this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //pan mode
+			//}}panmode
+			
 			this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
 			this._element.addEventListener('touchend', 	(e)=>this.el_touchend(e)  );
 		}
@@ -856,6 +867,20 @@ class c_scr_ox{
 		
 	}
 	
+	el_pan_click(p_event){
+		p_event.preventDefault();
+		
+		if( this.pan_mode ){
+			this.pan_mode = false;
+			this.tool_pan.setAttribute('fill-opacity','0.5');	
+		}
+		else{
+			this.pan_mode = true;
+			this.tool_pan.setAttribute('fill-opacity','0.2');
+		}
+		console.log('pan mode : ', this.pan_mode);
+	}	
+	
 	update_axis(){
 		this.X_axis.setAttribute('x1',String(this._vb_x_min));
 		//this.X_axis.setAttribute('y1',String(this._vb_curr_oY));
@@ -988,8 +1013,26 @@ class c_scr_ox{
 	//}		
 	////}}
 	
+	el_touchstart(p_event){
+		console.log('touch start');
+		//VALD
+		if( !this.pan_mode ){
+			return;
+		}
+		
+		//mouse down event와 동일로직 
+		//p_event.preventDefault();
+		this.wheel_ing = true;		
+
+		let vbxy = this.ut_touchevent_mouse_vbxy(p_event);
+
+		//원점과 떨어진 정도 
+		this._vb_curr_oX_delta = vbxy.x - this._vb_curr_oX;
+		this._vb_curr_oY_delta = vbxy.y - this._vb_curr_oY;							
+	}
+	
 	el_mousedown(p_event){
-		//wheel을 누른 거에만 반응 
+		//wheel 버튼을 누른 거에만 반응(wheel drag해서 view이동) 
 		if(p_event.buttons == 4){
 			//console.log('wheel 시작');
 			p_event.preventDefault();
@@ -1000,11 +1043,47 @@ class c_scr_ox{
 			//this._vb_curr_oY_delta = p_event.clientY - this._vb_curr_oY;			
 			this._vb_curr_oX_delta = p_event.offsetX  - this._vb_curr_oX;
 			this._vb_curr_oY_delta = p_event.offsetY - this._vb_curr_oY;			
-			
-			
 		}
 	}
 	
+	el_touchend(p_event){
+		
+		//move view mode 
+		if( this.pan_mode ){
+			//console.log( String(this.debug_cnt++) + '] touch - end (pan mode)' );
+			p_event.preventDefault();
+			
+			//{{
+			//this.pan_mode  = false;
+			
+			//this.tool_pan.fireEvent('onClick');
+			
+			let tmp_evt = document.createEvent('Events');
+			tmp_evt.initEvent( 'click' , true, false);
+			this.tool_pan.dispatchEvent( tmp_evt );
+			
+			//}}
+			
+			
+			this.wheel_ing = false;		
+
+			this._vb_curr_oX_delta = 0;
+			this._vb_curr_oY_delta = 0;			
+		}		
+		
+		if( this.drag_ing ){
+			//debugger;
+			console.log( String(this.debug_cnt++) + '] touch - end' );
+			//console.log( p_event );
+			this.drag_ing = false;
+			
+			this.drag_obj.cb_mouseup();
+			this.drag_obj = null;
+			
+			//this.drag_obj.update_position();
+		}		
+			
+	}		
 
 	
 	el_mouseup(p_event){
@@ -1065,20 +1144,7 @@ class c_scr_ox{
 	//}		
 	//}}
 
-	el_touchend(p_event){
-		if( this.drag_ing ){
-			//debugger;
-			console.log( String(this.debug_cnt++) + '] touch - end' );
-			//console.log( p_event );
-			this.drag_ing = false;
-			
-			this.drag_obj.cb_mouseup();
-			this.drag_obj = null;
-			
-			//this.drag_obj.update_position();
-		}		
-			
-	}		
+	
 	
 	
 	//}}mouse_pointer_vb_xy2로 변경
@@ -1222,19 +1288,7 @@ class c_scr_ox{
 		
 	}
 	
-	el_touchmove(p_event){
-		if( !this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
-			return;
-		}
-		
-		p_event.preventDefault();
-		
-		let vbxy      = this.ut_touchevent_mouse_vbxy(p_event);
-		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
-		
-		this.drag_obj.update_position_from_vb( vb_magnet.x , vb_magnet.y );
-	}
-	
+
 	//el_mousemove와 동일로직
 	el_touchmove_v1(p_event){
 		if( !this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
@@ -1300,6 +1354,8 @@ class c_scr_ox{
 		//}}
 	}		
 	
+
+	
 	el_mousemove(p_event){
 		//{{debug 
 		//info_update(String(this.debug_cnt++) + 'mouse move');
@@ -1364,6 +1420,32 @@ class c_scr_ox{
 		this.update_grid();
 		this.update_axis();		
 	}
+	
+	el_touchmove(p_event){
+		//view move mode 
+		if( this.pan_mode ){
+			p_event.preventDefault();
+			
+			let vbxy = this.ut_touchevent_mouse_vbxy(p_event);
+
+			this._vb_curr_oX = vbxy.x - this._vb_curr_oX_delta;
+			this._vb_curr_oY = vbxy.y - this._vb_curr_oY_delta;
+			
+			this.update_viewbox();
+			this.update_grid();
+			this.update_axis();					
+		}
+		
+		if( this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
+			p_event.preventDefault();
+			
+			let vbxy      = this.ut_touchevent_mouse_vbxy(p_event);
+			let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
+			
+			this.drag_obj.update_position_from_vb( vb_magnet.x , vb_magnet.y );
+		}
+	}		
+	
 	
 	//mouse wheeel 돌릴 때 
 	
@@ -5085,6 +5167,7 @@ class c_config{
 	tool_magnet                = null;
 	layer_tools_grid_translate = null;
 	tool_grid                  = null;
+	tool_pan                   = null;
 
 	X_axis = null;
 	Y_axis = null;
@@ -5352,6 +5435,23 @@ class c_config{
 		this.layer_tools_grid_translate.appendChild( this.tool_grid );
 		//}}		
 		
+		//{{pan - move view 
+		//this.reg_grid_icon( this.layer_tools_scale ); //이런거 하나 만들어 줘야함
+		let tool_pan_hit_g = document.createElementNS(SVG_NS,'g');
+		tool_pan_hit_g.setAttribute('transform','translate(5,75)');
+		this.layer_tools_scale.appendChild(tool_pan_hit_g); 
+		
+		this.tool_pan = document.createElementNS(SVG_NS,'rect');
+		this.tool_pan.setAttribute('fill-opacity','0.5');	//fill-opacity:	0;
+		this.tool_pan.setAttribute('x','0');
+		this.tool_pan.setAttribute('y','0');
+		this.tool_pan.setAttribute('width','30');
+		this.tool_pan.setAttribute('height','30');	
+		tool_pan_hit_g.appendChild( this.tool_pan );		
+		//}}pan - move view
+		
+		
+		////////////////////////////////////////////////////////////////
 		this.X_axis = document.createElementNS(SVG_NS,'line');
 		this.X_axis.setAttribute('id','line1');
 		//this.X_axis.setAttribute('x1','0');
