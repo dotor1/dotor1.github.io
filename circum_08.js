@@ -128,49 +128,291 @@ class c_scr_ox{
 	}
 	
 	init2(p_config){
+		
 		this.conf = p_config;
 		
-		return;
+		//이렇게 사용할지 or configuration object를 이용할지는 선택을 해봐야함
+		this.platform = this.conf.platform;
 		
-		//		
-		this.conf.e_div = document.getElementById( this.conf.inpt_div_name );
-		this.conf.e_div.setAttribute('style','background:transparent;');	
+		this._ct_x_pixels    = this.conf._ct_x_pixels;
+		this._ct_y_pixels    = this.conf._ct_y_pixels;
+		
+		this._vb_x_grid_size = this.conf._vb_x_grid_size;
+		this._vb_y_grid_size = this.conf._vb_y_grid_size;
+		
+		this._vb_scale_factor = this.conf._vb_scale_factor
+		this._vb_scale_x = this.conf._vb_scale_x;
+		this._vb_scale_y = this.conf._vb_scale_y;
+		
+		this._element_name = this.conf.e_svg_name;
+		this._element      = this.conf.e_svg;
+		
+		this._element_width  = this.conf.width; 
+		this._element_height = this.conf.height;
+		
+		this._Ox = this.conf._Ox;
+		this._Oy = this.conf._Oy;
+		
+		this._vb_curr_oX  = this.conf._vb_curr_oX;
+		this._vb_curr_oY  = this.conf._vb_curr_oY;
+
+		this.layer_grid           = this.conf.layer_grid;
+		this.layer_axis           = this.conf.layer_axis;
+		this.layer_length_arc     = this.conf.layer_length_arc;
+		this.layer_angle          = this.conf.layer_angle;
+		this.layer_bg             = this.conf.layer_bg;
+		this.layer_angle_symbol   = this.conf.layer_angle_symbol;
+		this.layer_length_symbol  = this.conf.layer_length_symbol;
+		this.layer_path           = this.conf.layer_path;
+		this.layer_length_feature = this.conf.layer_length_feature;
+		this.layer_symbol         = this.conf.layer_symbol;
+		this.layer_points         = this.conf.layer_points;
+		this.layer_hit_area       = this.conf.layer_hit_area;
 		
 		//
-		this.conf.e_svg = document.createElementNS(SVG_NS,'svg');		
-		this.conf.e_svg.setAttribute('xmlns' , SVG_NS);	//namespace 		
-		this.conf.e_svg.setAttribute('width' , this.conf.inpt_width  );	
-		this.conf.e_svg.setAttribute('height', this.conf.inpt_height );	
-		this.conf.e_div.appendChild(this.conf.e_svg);
+		this.layer_tools          = this.conf.layer_tools;
+		this.layer_tools_scale    = this.conf.layer_tools_scale;
+
+		this.tool_magnet          = this.conf.tool_magnet;
+		this.layer_tools_grid_translate = this.conf.layer_tools_grid_translate;
+		this.tool_grid            = this.conf.tool_grid;
+
+		this.X_axis               = this.conf.X_axis;
+		this.Y_axis               = this.conf.Y_axis;
 		
-		debugger;
-		
-		////
-		//if( this.platform.desktop){	
-		//	this._element_width  = p_width;
-		//	this._element_height = p_height;
-		//}
-		//else{
-		//	this._element_width  = 2*p_width;
-		//	this._element_height = 2*p_height;			
-		//}
 		//
-		//this._element.setAttribute('width',this._element_width);
-		//this._element.setAttribute('height',this._element_height);		
-		////
+		this.tool_magnet.addEventListener('click', (e)=>this.el_magnet_click(e) );	
+		this.tool_grid.addEventListener('click', (e)=>this.el_grid_click(e) );
 		
-		//this._element_name = p_name;
-		//this._element = document.getElementById(p_name);
-		//
-		//this.layer_grid = document.createElementNS(SVG_NS,'g');		
-		//	
-		//this._element.setAttribute('xmlns',SVG_NS);	//namespace 		
 		
-		debugger;
-			
-		//this._element.setAttribute('xmlns',SVG_NS);	//namespace 		
+		//event 등록
+		this._element.addEventListener('wheel',(e)=>this.el_wheel(e) );	//wheel 확대/축소
 		
+		this._element.addEventListener('mousedown',(e)=>this.el_mousedown(e) );	//wheel 클릭
+		this._element.addEventListener('mouseup',(e)=>this.el_mouseup(e) );		//
+		this._element.addEventListener('mousemove',(e)=>this.el_mousemove(e) );	//wheel drag	
+		
+		//this._element.addEventListener('keypress',(e)=>this.el_keypress(e) );	//spacebar
+		window.addEventListener('keypress',(e)=>this.el_keypress(e) );
+		
+		this._element.addEventListener('mouseleave',(e)=>this.el_mouseleave(e) );	//svg가 mouse pointer가 올라올 때		
+		this._element.addEventListener('mouseenter',(e)=>this.el_mouseenter(e) );		
+		
+		
+		//cell phone drag evt
+		if( this.conf.mobile ){
+			//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //'점'에서 touch start
+			this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
+			this._element.addEventListener('touchend', 	(e)=>this.el_touchend(e)  );
+		}
+		
+		this.update_viewbox();
+		this.update_grid();				
+				
 	}
+	
+	/*
+	init4(){
+		//this.update_viewbox();
+		//this.update_grid();		
+	}
+	*/
+
+		/*	
+	init3(){
+
+		//layer 달기
+		this.layer_grid = document.createElementNS(SVG_NS,'g');
+		this.layer_grid.setAttribute('id','my_grid');
+		this.layer_grid.setAttribute('class','c_grid');
+		this._element.appendChild(this.layer_grid);
+
+		this.layer_axis = document.createElementNS(SVG_NS,'g');
+		this.layer_axis.setAttribute('id','axis');
+		this.layer_axis.setAttribute('class','c_axis');
+		this._element.appendChild(this.layer_axis);
+		
+		//this.layer_length_arc = document.createElementNS(SVG_NS,'g');
+		//this.layer_length_arc.setAttribute('id','my_length_arc');
+		//this.layer_length_arc.setAttribute('class','c_angle');
+		//this._element.appendChild(this.layer_length_arc);				
+		
+		//{{
+		this.layer_length_arc = document.createElementNS(SVG_NS,'g');
+		this.layer_length_arc.setAttribute('id','my_length_arc');
+		this.layer_length_arc.setAttribute('class','bg_len_arc');
+		this._element.appendChild(this.layer_length_arc);		
+
+	
+		
+		//}}		
+		
+		this.layer_angle = document.createElementNS(SVG_NS,'g');
+		this.layer_angle.setAttribute('id','my_angle');
+		this.layer_angle.setAttribute('class','c_angle');
+		this._element.appendChild(this.layer_angle);		
+		
+		this.layer_bg = document.createElementNS(SVG_NS,'g');
+		this.layer_bg.setAttribute('id','my_bg');
+		this.layer_bg.setAttribute('class','c_bg');
+		this._element.appendChild(this.layer_bg);				
+		
+		this.layer_angle_symbol = document.createElementNS(SVG_NS,'g');
+		this.layer_angle_symbol.setAttribute('id','my_angle_symbol');
+		this.layer_angle_symbol.setAttribute('class','c_angle_symbol');
+		this._element.appendChild(this.layer_angle_symbol);						
+		
+		this.layer_length_symbol = document.createElementNS(SVG_NS,'g');
+		this.layer_length_symbol.setAttribute('id','my_length_symbol');
+		this.layer_length_symbol.setAttribute('class','c_angle_symbol');
+		this._element.appendChild(this.layer_length_symbol);								
+		
+		this.layer_path = document.createElementNS(SVG_NS,'g');
+		this.layer_path.setAttribute('id','my_path');
+		this.layer_path.setAttribute('class','c_path');
+		this._element.appendChild(this.layer_path);
+		
+		this.layer_length_feature = document.createElementNS(SVG_NS,'g');
+		this.layer_length_feature.setAttribute('id','my_length_feature');
+		this.layer_length_feature.setAttribute('class','bg_len_feature');
+		this._element.appendChild(this.layer_length_feature);			
+		
+		this.layer_symbol = document.createElementNS(SVG_NS,'g');	//symbol: 점이름
+		this.layer_symbol.setAttribute('id','my_symbol');
+		this.layer_symbol.setAttribute('class','c_symbol');
+		this._element.appendChild(this.layer_symbol);		
+		
+		this.layer_points = document.createElementNS(SVG_NS,'g');
+		this.layer_points.setAttribute('id','my_points');
+		this.layer_points.setAttribute('class','c_points');
+		this._element.appendChild(this.layer_points);		
+		
+		this.layer_hit_area = document.createElementNS(SVG_NS,'g');
+		this.layer_hit_area.setAttribute('id','my_hit_area');
+		this.layer_hit_area.setAttribute('class','c_point_hit_area');
+		this._element.appendChild(this.layer_hit_area);
+
+		//{{tools layer
+		this.layer_tools = document.createElementNS(SVG_NS,'g');
+		this.layer_tools.setAttribute('id','my_tools');
+		this.layer_tools.setAttribute('class','c_tools');
+		this._element.appendChild(this.layer_tools);		
+		
+		this.layer_tools_scale = document.createElementNS(SVG_NS,'g');	//scale 
+		
+		if( this.platform.desktop ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		}
+		else if( this.platform.mobile ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(2*this._vb_scale_x) + ')' );		
+		}
+		this.layer_tools.appendChild(this.layer_tools_scale);				
+		
+		//magnet
+		this.reg_magnet_icon( this.layer_tools_scale );	// 자석 아이콘 등록
+				
+		let icon_magnet_hit = document.createElementNS(SVG_NS,'g');
+		icon_magnet_hit.setAttribute('transform','translate(5,5)');
+		this.layer_tools_scale.appendChild(icon_magnet_hit);				
+		
+		this.tool_magnet = document.createElementNS(SVG_NS,'rect');
+		this.tool_magnet.setAttribute('fill-opacity','0.5');	//fill-opacity:	0;
+		this.tool_magnet.setAttribute('x','0');
+		this.tool_magnet.setAttribute('y','0');
+		this.tool_magnet.setAttribute('width','30');
+		this.tool_magnet.setAttribute('height','30');	
+		//this.layer_tools.appendChild( this.tool_magnet );
+		//this.layer_tools_scale.appendChild( this.tool_magnet );
+		icon_magnet_hit.appendChild( this.tool_magnet );
+		
+		this.tool_magnet.addEventListener('click', (e)=>this.el_magnet_click(e) );
+		//}}
+		
+		//{{grid
+		this.reg_grid_icon( this.layer_tools_scale );
+		
+		this.layer_tools_grid_translate = document.createElementNS(SVG_NS,'g');
+		this.layer_tools_grid_translate.setAttribute('transform','translate(5,40)');
+		//this.layer_tools.appendChild(this.layer_tools_grid_translate);
+		this.layer_tools_scale.appendChild(this.layer_tools_grid_translate); 
+		
+		this.tool_grid = document.createElementNS(SVG_NS,'rect');
+		this.tool_grid.setAttribute('fill-opacity','0.2');	//fill-opacity:	0;
+		this.tool_grid.setAttribute('x','0');
+		this.tool_grid.setAttribute('y','0');
+		this.tool_grid.setAttribute('width','30');
+		this.tool_grid.setAttribute('height','30');	
+		this.layer_tools_grid_translate.appendChild( this.tool_grid );
+		
+		this.tool_grid.addEventListener('click', (e)=>this.el_grid_click(e) );
+		//}}
+
+		
+		//
+		this.update_viewbox();
+		this.update_grid();
+
+		this.X_axis = document.createElementNS(SVG_NS,'line');
+		this.X_axis.setAttribute('id','line1');
+		//this.X_axis.setAttribute('x1','0');
+		//this.X_axis.setAttribute('y1','200');
+		//this.X_axis.setAttribute('x2','400');
+		//this.X_axis.setAttribute('y2','200');
+		this.X_axis.setAttribute('x1',String(this._vb_x_min));
+		//this.X_axis.setAttribute('y1',String(this._vb_curr_oY));
+		this.X_axis.setAttribute('y1',String(this._Oy));
+		
+		//this.X_axis.setAttribute('x2',String(this._vb_x_min+this._vb_width ));
+		this.X_axis.setAttribute('x2',String(this._vb_x_max ));
+		//this.X_axis.setAttribute('y2',String(this._vb_curr_oY));
+		this.X_axis.setAttribute('y2',String(this._Oy));
+		this.layer_axis.appendChild(this.X_axis);
+
+		this.Y_axis = document.createElementNS(SVG_NS,'line');
+		this.Y_axis.setAttribute('id','line2');
+		//this.Y_axis.setAttribute('x1','200');
+		//this.Y_axis.setAttribute('y1','0');
+		//this.Y_axis.setAttribute('x2','200');
+		//this.Y_axis.setAttribute('y2','400');
+		//this.Y_axis.setAttribute('x1',String(this._vb_curr_oX));
+		this.Y_axis.setAttribute('x1',String(this._Ox));
+		this.Y_axis.setAttribute('y1',String(this._vb_y_min));
+		//this.Y_axis.setAttribute('x2',String(this._vb_curr_oX));
+		this.Y_axis.setAttribute('x2',String(this._Ox));
+		this.Y_axis.setAttribute('y2',String(this._vb_y_max));
+		this.layer_axis.appendChild(this.Y_axis);		
+		
+	//  = 0;
+	//_vb_height = 0;
+	//
+	// = 0;
+
+		//event 등록
+		this._element.addEventListener('wheel',(e)=>this.el_wheel(e) );	//wheel 확대/축소
+		
+		this._element.addEventListener('mousedown',(e)=>this.el_mousedown(e) );	//wheel 클릭
+		this._element.addEventListener('mouseup',(e)=>this.el_mouseup(e) );		//
+		this._element.addEventListener('mousemove',(e)=>this.el_mousemove(e) );	//wheel drag	
+		
+		//this._element.addEventListener('keypress',(e)=>this.el_keypress(e) );	//spacebar
+		window.addEventListener('keypress',(e)=>this.el_keypress(e) );
+		
+		this._element.addEventListener('mouseleave',(e)=>this.el_mouseleave(e) );	//svg가 mouse pointer가 올라올 때		
+		this._element.addEventListener('mouseenter',(e)=>this.el_mouseenter(e) );		
+		
+		
+		//cell phone drag evt
+		if( this.platform.mobile ){
+			//this._element.addEventListener('touchstart', (e)=>this.el_touchstart(e) ); //'점'에서 touch start
+			this._element.addEventListener('touchmove', (e)=>this.el_touchmove(e) );
+			this._element.addEventListener('touchend', 	(e)=>this.el_touchend(e)  );
+		}
+
+	
+			
+	}
+		*/		
+		
 	
 	//init(p_name){
 	init(p_name, 
@@ -479,6 +721,8 @@ class c_scr_ox{
 		
 	}
 	
+	//config쪽으로 이동 
+	/*
 	reg_magnet_icon(p_parent){
 		let icon_magnet = document.createElementNS(SVG_NS,'g');
 		icon_magnet.setAttribute('transform','translate(5,5)');
@@ -575,7 +819,9 @@ class c_scr_ox{
 		grid_icon.setAttribute('y2',String(26));
 		icon_grid.appendChild(grid_icon);
 
-	}	
+	}
+	*/
+	//}}config 쪽으로 이동
 	
 	el_magnet_click(){
 		//debugger;
@@ -938,7 +1184,44 @@ class c_scr_ox{
 	//}	
 	////}}
 	
-	//el_mousemove와 동일로직
+	ut_touchevent_mouse_vbxy(p_event){
+		////{{
+		//////console.log('el_touchmove');
+		////
+		////if( this.touch_obj == null){
+		////	return;
+		////}
+		////p_event.preventDefault();
+		//
+		//let standard_x = document.getElementById('svg_wrapper').offsetLeft;
+		//let standard_y = document.getElementById('svg_wrapper').offsetTop;
+		//
+		//debugger;
+		//
+		////debugger;
+		//
+		////let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
+		////let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
+		//
+		//let offsetX = p_event.touches[0].pageX - standard_x;
+		//let offsetY = p_event.touches[0].pageY - standard_y;
+		////}}
+
+		let standard_x = this.conf.e_div_x;
+		let standard_y = this.conf.e_div_y;
+		
+		let page_x = p_event.touches[0].pageX;
+		let page_y = p_event.touches[0].pageY;
+		
+		let offset_x = page_x - standard_x;
+		let offset_y = page_y - standard_y;
+		
+		let vbxy = this.scr_to_vb(offset_x,offset_y);		
+		
+		return vbxy;
+		
+	}
+	
 	el_touchmove(p_event){
 		if( !this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
 			return;
@@ -946,42 +1229,75 @@ class c_scr_ox{
 		
 		p_event.preventDefault();
 		
+		let vbxy      = this.ut_touchevent_mouse_vbxy(p_event);
+		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
 		
-		////console.log('el_touchmove');
+		this.drag_obj.update_position_from_vb( vb_magnet.x , vb_magnet.y );
+	}
+	
+	//el_mousemove와 동일로직
+	el_touchmove_v1(p_event){
+		if( !this.drag_ing){	//drag_ing : point에서 touchstart하는 시점에 등록시킨다.
+			return;
+		}
+		
+		p_event.preventDefault();
+		
+		////{{
+		//////console.log('el_touchmove');
+		////
+		////if( this.touch_obj == null){
+		////	return;
+		////}
+		////p_event.preventDefault();
 		//
-		//if( this.touch_obj == null){
-		//	return;
-		//}
-		//p_event.preventDefault();
-		
-		let standard_x = document.getElementById('svg_wrapper').offsetLeft;
-		let standard_y = document.getElementById('svg_wrapper').offsetTop;
-		
+		//let standard_x = document.getElementById('svg_wrapper').offsetLeft;
+		//let standard_y = document.getElementById('svg_wrapper').offsetTop;
+		//
 		//debugger;
-		
-		//let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
-		//let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
-
-		let offsetX = p_event.touches[0].pageX - standard_x;
-		let offsetY = p_event.touches[0].pageY - standard_y;
-		
 		//
-		console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
+		////debugger;
 		//
-		//debugger;
-				
-		let vbxy = this.scr_to_vb(offsetX,offsetY);
+		////let offsetX = p_event.touches[0].pageX - p_event.touches[0].target.offsetLeft;     
+		////let offsetY = p_event.touches[0].pageY - p_event.touches[0].target.offsetTop;
+		//
+		//let offsetX = p_event.touches[0].pageX - standard_x;
+		//let offsetY = p_event.touches[0].pageY - standard_y;
+		////}}{{
+		
+		//{{
+		//let scr_xy = this.ut_touchevent_mouse_vbxy(p_event);
+		//let offsetX = scr_xy.x;
+		//let offsetY = scr_xy.y;
+		//
+		////}}
+		//
+		////
+		//console.log( String(this.debug_cnt++) + ' touch - move : ' , offsetX , ' , ' , offsetY);
+		////
+		////debugger;
+		//		
+		//let vbxy = this.scr_to_vb(offsetX,offsetY);
+		//}}{[
+		let vbxy = this.ut_touchevent_mouse_vbxy(p_event);
+		//}}
 		
 		//magnetic grid mode인 경우에는 값을 보정
 		let vb_magnet = this.magnetic_grid( vbxy.x, vbxy.y);
-		let vb_x = vb_magnet.x;
-		let vb_y = vb_magnet.y;		
 		
-		let ct_xy = this.vb2ct( vb_x, vb_y );
-		
-		//let tmp_obj = g_trg.pC;
-		//this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
-		this.drag_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+		////{{
+		//let vb_x = vb_magnet.x;
+		//let vb_y = vb_magnet.y;		
+		//	
+		//let ct_xy = this.vb2ct( vb_x, vb_y );//[여기할차례 - ct없이 mouse_position update 가능
+		//
+		////let tmp_obj = g_trg.pC;
+		////this.touch_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+		//		
+		////this.drag_obj.update_position(vb_x,vb_y,ct_xy.x,ct_xy.y);	
+		////}}{{
+		this.drag_obj.update_position_from_vb( vb_magnet.x , vb_magnet.y );
+		//}}
 	}		
 	
 	el_mousemove(p_event){
@@ -1582,6 +1898,9 @@ class c_platform{
 	mobile 	= false;
 	desktop = false;
 	
+	portrait  = false;	//mobile에서만 의미있음
+	landscape = false;	//mobile에서만 의미있음
+	
 	constructor(){
 		this.mobile = navigator.userAgentData.mobile;
 		this.desktop = !this.mobile;
@@ -1593,6 +1912,15 @@ class c_platform{
 		else if( this.mobile ){
 			this.width  = window.screen.width;
 			this.height = window.screen.height;			
+			
+			if( this.height > this.landscape ){
+				this.portrait  = true;
+				this.landscape = false;
+			}
+			else{
+				this.portrait  = false;
+				this.landscape = true;				
+			}
 		}
 	}
 }
@@ -1647,7 +1975,11 @@ class c_symbol{
 		layer_symbols.appendChild( this.layer_translate);
 		
 		this.layer_rotate_origin = document.createElementNS(SVG_NS,'g');
-		this.layer_rotate_origin.setAttribute('transform','translate(' + String(DELTA_DISTANCE) + ',0)');
+		//{{
+		//this.layer_rotate_origin.setAttribute('transform','translate(' + String(DELTA_DISTANCE) + ',0)');
+		//}}{{
+		this.layer_rotate_origin.setAttribute('transform','translate(' + String( this.coordinate_obj.conf._vb_point_symbol_delta_r ) + ',0)');
+		//}}
 		this.layer_translate.appendChild(this.layer_rotate_origin);
 		
 		this.layer_rotate = document.createElementNS(SVG_NS,'g');
@@ -1655,6 +1987,11 @@ class c_symbol{
 		
 		this.layer_text = document.createElementNS(SVG_NS,'text');
 		this.layer_text.setAttribute('class','c_symbol_text');
+		//{{
+		//this.layer_text.setAttribute('font-size', this.coordinate_obj.conf._vb_point_symbol_font_size );
+		//this.layer_text.style.font-size = this.coordinate_obj.conf._vb_point_symbol_font_size ;
+		this.layer_text.style.fontSize = this.coordinate_obj.conf._vb_point_symbol_font_size ;
+		//}}
 		this.layer_rotate.appendChild( this.layer_text );
 		
 		this.text_node = document.createTextNode( p_symbol );
@@ -1696,7 +2033,11 @@ class c_symbol{
 		//<g transform='rotate(-90,-100,0)'>
 		//<text text-anchor="middle" dominant-baseline="middle" transform='rotate(0)'>D</text>
 		
-		let layer_rotate_val = 'rotate(' + String(ang) + ',' + String(-DELTA_DISTANCE) + ',0)';
+		//{{
+		//let layer_rotate_val = 'rotate(' + String(ang) + ',' + String(-DELTA_DISTANCE) + ',0)';
+		//}}{{
+		let layer_rotate_val = 'rotate(' + String(ang) + ',' + String( -this.coordinate_obj.conf._vb_point_symbol_delta_r ) + ',0)';
+		//}}
 		this.layer_rotate.setAttribute('transform',layer_rotate_val);
 		
 		let layer_text_val = 'rotate(' + String(txt_ang) + ')';
@@ -1763,6 +2104,9 @@ class c_line_symbol{
 		//
 		this.layer_text = document.createElementNS(SVG_NS,'text');
 		this.layer_text.setAttribute('class','c_symbol_text');
+		//{{
+		this.layer_text.style.fontSize = this.scs_obj.conf._vb_len_symbol_font_size ;	
+		//}}
 		this.layer_txt_wrapper.appendChild( this.layer_text );
 		
 		this.text_node = document.createTextNode( '' );
@@ -1907,6 +2251,9 @@ class c_angle_symbol{
 		
 		this.layer_text = document.createElementNS(SVG_NS,'text');
 		this.layer_text.setAttribute('class','c_symbol_text');
+		//{{
+		this.layer_text.style.fontSize = this.scs_obj.conf._vb_arc_symbol_font_size ;
+		//}}
 		this.layer_translate.appendChild( this.layer_text );
 		
 		this.text_node = document.createTextNode( '' );
@@ -1936,8 +2283,8 @@ class c_angle_symbol{
 
 ////////////////////////////////////////////////////////
 
-const HIT_AREA_R = 50;	//반응영역 반지름
-const POINT_R = 4;		//점 반지름
+//const HIT_AREA_R = 50;	//반응영역 반지름
+//const POINT_R = 4;		//점 반지름
 
 class c_point{
 	
@@ -2013,6 +2360,25 @@ class c_point{
 		hit_layer.appendChild(imsi);
 
 		if( this.interactive ){			
+			//십자선 - 가로
+			let garo = document.createElementNS(SVG_NS,'line')
+			garo.setAttribute('class','c_imsi');
+			garo.setAttribute('x1',-100);
+			garo.setAttribute('y1',0);						
+			garo.setAttribute('x2',100);						
+			garo.setAttribute('y2',0);	
+			imsi.appendChild(garo);		
+			
+			//십자선 - 세로
+			let sero = document.createElementNS(SVG_NS,'line')
+			sero.setAttribute('class','c_imsi');
+			sero.setAttribute('x1',0);
+			sero.setAttribute('y1',-100);						
+			sero.setAttribute('x2',0);						
+			sero.setAttribute('y2',100);	
+			imsi.appendChild(sero);		
+			
+			//반응영역
 			this.hit_area = document.createElementNS(SVG_NS,'circle')
 			//this.hit_area.setAttribute('id','testtest');
 			this.hit_area.setAttribute('id','ha_' + this.symbol);
@@ -2021,25 +2387,30 @@ class c_point{
 			this.hit_area.setAttribute('cy',0);				
 			//this.hit_area.setAttribute('cx',vb_xy.x);
 			//this.hit_area.setAttribute('cy',vb_xy.y);				
-			this.hit_area.setAttribute('r',HIT_AREA_R);
-			imsi.appendChild(this.hit_area);			
+			
+			//this.hit_area.setAttribute('r',HIT_AREA_R);
+			this.hit_area.setAttribute('r', this.ct.conf._vb_point_hitarea_r );
+			
+			imsi.appendChild(this.hit_area);	
 		}
 		
-		let garo = document.createElementNS(SVG_NS,'line')
-		garo.setAttribute('class','c_imsi');
-		garo.setAttribute('x1',-100);
-		garo.setAttribute('y1',0);						
-		garo.setAttribute('x2',100);						
-		garo.setAttribute('y2',0);	
-		imsi.appendChild(garo);		
-
-		let sero = document.createElementNS(SVG_NS,'line')
-		sero.setAttribute('class','c_imsi');
-		sero.setAttribute('x1',0);
-		sero.setAttribute('y1',-100);						
-		sero.setAttribute('x2',0);						
-		sero.setAttribute('y2',100);	
-		imsi.appendChild(sero);
+		//{{
+		//let garo = document.createElementNS(SVG_NS,'line')
+		//garo.setAttribute('class','c_imsi');
+		//garo.setAttribute('x1',-100);
+		//garo.setAttribute('y1',0);						
+		//garo.setAttribute('x2',100);						
+		//garo.setAttribute('y2',0);	
+		//imsi.appendChild(garo);		
+		//
+		//let sero = document.createElementNS(SVG_NS,'line')
+		//sero.setAttribute('class','c_imsi');
+		//sero.setAttribute('x1',0);
+		//sero.setAttribute('y1',-100);						
+		//sero.setAttribute('x2',0);						
+		//sero.setAttribute('y2',100);	
+		//imsi.appendChild(sero);
+		//}}
 		
 		this.imsi.setAttribute('transform','translate(' + String(vb_xy.x) +  ',' + String(vb_xy.y) + ')' )
 		
@@ -2056,7 +2427,11 @@ class c_point{
 		//this.point_obj.setAttribute('cy',0);	
 		this.point_obj.setAttribute('cx',vb_xy.x);
 		this.point_obj.setAttribute('cy',vb_xy.y);	
-		this.point_obj.setAttribute('r',POINT_R);
+		
+		//this.point_obj.setAttribute('r',POINT_R);
+		this.point_obj.setAttribute('r', this.ct.conf._vb_point_r );
+		
+		
 		points_layer.appendChild(this.point_obj);					
 		
 		//event listener
@@ -2126,6 +2501,45 @@ class c_point{
 		}		
 		
 	}	
+	
+	//update 중 가장 최근 로직 
+	update_position_from_vb( p_vb_x , p_vb_y ){
+		//(VALD)
+		if(this.drag_ing){
+			this.imsi.setAttribute('class','c_pha_draging');
+		}
+		
+		//
+		let update_flag = false;
+		if( p_vb_x != this.vb_x || p_vb_y != this.vb_y){
+			update_flag = true;
+		}
+		
+		//x,y
+		let ct_xy = this.ct.vb2ct( p_vb_x, p_vb_y );//[여기할차례 - ct없이 mouse_position update 가능
+		
+		this.vb_x = p_vb_x;
+		this.vb_y = p_vb_y;
+		
+		this.ct_x = ct_xy.x;
+		this.ct_y = ct_xy.y;
+		
+		//scr object
+		this.imsi.setAttribute('transform','translate(' + String(p_vb_x) +  ',' + String(p_vb_y) + ')' )
+		
+		this.point_obj.setAttribute('cx',String( p_vb_x ));
+		this.point_obj.setAttribute('cy',String( p_vb_y ));
+		
+		this.symbol_obj.update_position( p_vb_x , p_vb_y );
+		
+		//call call-back routine
+		//if( this.call_back != null ){
+		if( this.call_back != null && update_flag ){
+			//debugger;
+			this.call_back(this);
+		}				
+		
+	}
 	
 	update_position2(p_ct_x,p_ct_y){
 		if(this.drag_ing){
@@ -2390,6 +2804,9 @@ class c_line{
 		let path_layer = this.scs.get_layer_path();
 		
 		this.line_obj = document.createElementNS(SVG_NS,'line');
+		//{{
+		this.line_obj.setAttribute('stroke-width'    , this.scs.conf._vb_line_stroke_width ); 
+		//}}
 		path_layer.appendChild( this.line_obj );
 		
 		//2등변삼각형,정삼각형 표시
@@ -2416,11 +2833,23 @@ class c_line{
 		//<path id='arc2' class='bg_red'></path>	
 		this.Q1_arc = document.createElementNS(SVG_NS,'path');
 		//this.Q1_arc.setAttribute('class','');
+		
+		//{{
+		//this.layer_text.style.fontSize = this.scs_obj.conf._vb_len_symbol_font_size ;
+		//_vb_len_arc_stoke_dasharray = '';	//선길이 arc
+		//_vb_len_arc_stroke_width    = '';		
+		this.Q1_arc.setAttribute('stroke-dasharray', this.scs.conf._vb_len_arc_stoke_dasharray );
+		this.Q1_arc.setAttribute('stroke-width'    , this.scs.conf._vb_len_arc_stroke_width    );
+		//}}
 		length_arc_layer.appendChild( this.Q1_arc );				
 
 		//<path id='arc1' class='bg_red'></path>
 		this.Q2_arc = document.createElementNS(SVG_NS,'path');
 		//this.Q2_arc.setAttribute('class','');
+		//{{
+		this.Q2_arc.setAttribute('stroke-dasharray', this.scs.conf._vb_len_arc_stoke_dasharray );
+		this.Q2_arc.setAttribute('stroke-width'    , this.scs.conf._vb_len_arc_stroke_width    );
+		//}}		
 		length_arc_layer.appendChild( this.Q2_arc );				
 		//
 		
@@ -4577,27 +5006,486 @@ class c_triangle{
 
 ////////////////////////////////////////////////////////
 class c_config{
-	//제어용
-	platform = null;
-	ratio = 1;
-		
-	e_div = null;
-	e_svg = null;
+	///////////////////////////////////////////////////////////////////
+	//                                                               //
+	//		Pre-condition                                            //
+	//                                                               //
+	env_config = null;
+	scr_config = null;
+
+	///////////////////////////////////////////////////////////////////
+	//                                                               //
+	//		platform                                                 //
+	//                                                               //
+	mobile 	= false;
+	desktop = false;
+	
+	portrait  = false;	//mobile에서만 의미있음
+	landscape = false;	//mobile에서만 의미있음
+	
+	//I/F - scr setting
+	_ct_x_pixels = 0;
+	_ct_y_pixels = 0;
+	
+	_vb_x_grid_size = 0; 
+	_vb_y_grid_size = 0;
+	
+	_vb_scale_factor = 0;
+	_vb_scale_x = 0;
+	_vb_scale_y = 0;
+
+	_Ox = 0;
+	_Oy = 0;
+	
+	_vb_curr_oX  = 0;
+	_vb_curr_oY  = 0;	
+	
+	//I/F - scr design
+	_vb_point_hitarea_r = 0;
+	_vb_point_r = 0;
+	_vb_point_symbol_delta_r = 0;
+	_vb_point_symbol_font_size = '';
+	
+	_vb_len_symbol_font_size    = '';
+	_vb_len_arc_stoke_dasharray = '';	//선길이 arc
+	_vb_len_arc_stroke_width    = '';
+	
+	_vb_arc_symbol_font_size    = '';
+	
+	_vb_line_stroke_width       = '';
 
 	
-	//입력받아야 하는
-	inpt_div_name = '';
+	///////////////////////////////////////////////////////////////////
+	//                                                               //
+	//		html element                                             //
+	//                                                               //
+	e_div_name = '';
+	e_div = null;
+	e_div_x = 0;
+	e_div_y = 0;
 	
-	constructor(){
+	e_svg_name = '';
+	e_svg = null;
+	
+	layer_grid = null;
+	layer_axis = null;
+	layer_length_arc = null;
+	layer_angle = null;
+	layer_bg = null;
+	layer_angle_symbol = null;
+	layer_length_symbol = null;
+	layer_path = null;
+	layer_length_feature = null;
+	layer_symbol = null;
+	layer_points = null;
+	layer_hit_area = null;
+	
+	layer_tools                = null;
+	layer_tools_scale          = null; 
+	tool_magnet                = null;
+	layer_tools_grid_translate = null;
+	tool_grid                  = null;
+
+	X_axis = null;
+	Y_axis = null;
+
+
+	///////////////////////////////////////////////////////////////////
+	//                                                               //
+	//		control                                                  //
+	//                                                               //
+	platform = null;
+	
+	width  = 0;
+	height = 0;
+	
+	ratio = 0;
+		
+	constructor(p_env_config,p_scr_config){
+		this.env_config = p_env_config;
+		this.scr_config = p_scr_config;
+		
+		this.init();
+		this.init_scr_design();
+		this.init_scr();
+	}
+
+	//scr design 설정관련( ratio를 고려해서 작업해야 하기 때문)
+	init_scr_design(){
+		//this._vb_point_r = this.scr_config.point_r;
+		this._vb_point_r                = this.scr_config.point_r                * this.ratio;
+		this._vb_point_symbol_delta_r   = this.scr_config.point_symbol_delta_r   * this.ratio;
+		this._vb_point_symbol_font_size = String( this.scr_config.point_symbol_font_size * this.ratio ) + 'px';
+		
+		this._vb_len_symbol_font_size   = String( this.scr_config.len_symbol_font_size * this.ratio   ) + 'px';
+		
+		//////////////////////////////////////////////
+		////'stroke-dasharray','10 2');
+		//len_arc_stroke_dash1:5,
+		//len_arc_stroke_dash2:1,
+		//
+		let stroke_dash1 = this.scr_config.len_arc_stroke_dash1 * this.ratio;
+		let stroke_dash2 = this.scr_config.len_arc_stroke_dash2 * this.ratio;
+		this._vb_len_arc_stoke_dasharray = String(stroke_dash1) + ' ' + String(stroke_dash2);
+
+		////'stroke-width','2');		
+		//len_arc_stroke_width:1		
+		this._vb_len_arc_stroke_width = String( this.scr_config.len_arc_stroke_width * this.ratio );
+		
+		this._vb_arc_symbol_font_size = String( this.scr_config.arc_symbol_font_size * this.ratio ) + 'px';
+
+		//
+		this._vb_line_stroke_width    = String( this.scr_config.line_stroke_width    * this.ratio );
+		
+		
+	}
+	
+	init(){
+		//platform 관련
 		this.platform = new c_platform();
 		
-		//debugger
-		//ratio = window.
+		this.desktop = this.platform.desktop;
+		this.mobile  = this.platform.mobile;
 		
-		//기종에 따라서, 결국 달라져야 하는 것은 ratio임
+		this.portrait  = this.platform.portrait;
+		this.landscape = this.platform.landscape;
 		
-		info_update('scr size:' + String(this.platform.width) + ' x ' + String(this.platform.height) );
+		//scr env
+		this.e_div_name = this.env_config.div_name;
+		
+		if( this.desktop ){
+			this.ratio = 1;
+		}
+		else{
+			this.ratio = this.env_config.mobile_ratio; //mobile기기 기종에 따라서, 결국 달라져야 하는 것은 ratio임
+		}
+		
+		//I/F 
+		if( this.desktop ){
+			this._ct_x_pixels = this.env_config.pixelsPerOne;
+			this._ct_y_pixels = this._ct_x_pixels;		
+		}
+		else{
+			this._ct_x_pixels = this.env_config.pixelsPerOne * this.ratio;
+			this._ct_y_pixels = this._ct_x_pixels;			
+		}
+		
+		this._vb_x_grid_size = parseInt(this._ct_x_pixels * this.env_config.gridSize);
+		this._vb_y_grid_size = parseInt(this._ct_y_pixels * this.env_config.gridSize);		
+		this._vb_point_hitarea_r = parseInt(this._vb_x_grid_size/2);
+		
+		this._vb_scale_factor = this.env_config.scale;
+		this._vb_scale_x = Math.pow(2,this._vb_scale_factor);
+		this._vb_scale_y = this._vb_scale_x;			
+		
+		if( this.desktop ){
+			this.width  = this.env_config.width;
+			this.height = this.env_config.height;
+		}
+		else{
+			this.width  = this.env_config.width  * this.ratio;
+			this.height = this.env_config.height * this.ratio;			
+		}
+		
+		if( this.env_config.origin_mode == ORIGIN_USERDEFINED){	//원점 수동세팅
+			this._vb_curr_oX = this.env_config.origin_x;
+			this._vb_curr_oY = this.env_config.origin_y;
+		}
+		else if( this.env_config.origin_mode == ORIGIN_CENTER){	//원점은 화면중심
+			this._vb_curr_oX = this.width  / 2;
+			this._vb_curr_oY = this.height / 2;				
+		}
+		else if( this.env_config.origin_mode == ORIGIN_QUAD1){	//원점을 1사분면기준으로
+			this._vb_curr_oX = 0;
+			this._vb_curr_oY = this.height;
+		}
+		
+		try{
+			//touch event에서 필요, touch event는 offsetX/Y가 없음
+			this.e_div_x = document.getElementById( this.e_div_name ).offsetLeft;
+			this.e_div_y = document.getElementById( this.e_div_name ).offsetTop;
+			//let standard_x = document.getElementById('svg_wrapper').offsetLeft;
+			//let standard_y = document.getElementById('svg_wrapper').offsetTop;
+		}
+		catch( error ){
+			alert('div element name error');
+			debugger;
+		}
 	}
+	
+	init_scr(){
+		//root - div element		
+		this.e_div = document.getElementById( this.e_div_name );
+		this.e_div.setAttribute('style','background:transparent;');	
+		
+		//svg element beneath root div element 
+		this.e_svg_name = this.e_div_name + '_svg';
+		
+		this.e_svg = document.createElementNS(SVG_NS,'svg');		
+		this.e_svg.setAttribute('id' , this.e_svg_name);	//namespace 		
+		this.e_svg.setAttribute('xmlns' , SVG_NS);	//namespace 		
+		this.e_svg.setAttribute('width' , this.width  );	
+		this.e_svg.setAttribute('height', this.height );	
+		this.e_div.appendChild(this.e_svg);		
+		
+		//layer
+		this.layer_grid = document.createElementNS(SVG_NS,'g');
+		this.layer_grid.setAttribute('id','my_grid');
+		this.layer_grid.setAttribute('class','c_grid');
+		this.e_svg.appendChild(this.layer_grid);		
+		
+		this.layer_axis = document.createElementNS(SVG_NS,'g');
+		this.layer_axis.setAttribute('id','axis');
+		this.layer_axis.setAttribute('class','c_axis');
+		this.e_svg.appendChild(this.layer_axis);
+		
+		//this.layer_length_arc = document.createElementNS(SVG_NS,'g');
+		//this.layer_length_arc.setAttribute('id','my_length_arc');
+		//this.layer_length_arc.setAttribute('class','c_angle');
+		//this._element.appendChild(this.layer_length_arc);				
+		
+		//{{
+		this.layer_length_arc = document.createElementNS(SVG_NS,'g');
+		this.layer_length_arc.setAttribute('id','my_length_arc');
+		this.layer_length_arc.setAttribute('class','bg_len_arc');
+		this.e_svg.appendChild(this.layer_length_arc);		
+
+	
+		
+		//}}		
+		
+		this.layer_angle = document.createElementNS(SVG_NS,'g');
+		this.layer_angle.setAttribute('id','my_angle');
+		this.layer_angle.setAttribute('class','c_angle');
+		this.e_svg.appendChild(this.layer_angle);		
+		
+		this.layer_bg = document.createElementNS(SVG_NS,'g');
+		this.layer_bg.setAttribute('id','my_bg');
+		this.layer_bg.setAttribute('class','c_bg');
+		this.e_svg.appendChild(this.layer_bg);				
+		
+		this.layer_angle_symbol = document.createElementNS(SVG_NS,'g');
+		this.layer_angle_symbol.setAttribute('id','my_angle_symbol');
+		this.layer_angle_symbol.setAttribute('class','c_angle_symbol');
+		this.e_svg.appendChild(this.layer_angle_symbol);						
+		
+		this.layer_length_symbol = document.createElementNS(SVG_NS,'g');
+		this.layer_length_symbol.setAttribute('id','my_length_symbol');
+		this.layer_length_symbol.setAttribute('class','c_angle_symbol');
+		this.e_svg.appendChild(this.layer_length_symbol);								
+		
+		this.layer_path = document.createElementNS(SVG_NS,'g');
+		this.layer_path.setAttribute('id','my_path');
+		this.layer_path.setAttribute('class','c_path');
+		this.e_svg.appendChild(this.layer_path);
+		
+		this.layer_length_feature = document.createElementNS(SVG_NS,'g');
+		this.layer_length_feature.setAttribute('id','my_length_feature');
+		this.layer_length_feature.setAttribute('class','bg_len_feature');
+		this.e_svg.appendChild(this.layer_length_feature);			
+		
+		this.layer_symbol = document.createElementNS(SVG_NS,'g');	//symbol: 점이름
+		this.layer_symbol.setAttribute('id','my_symbol');
+		this.layer_symbol.setAttribute('class','c_symbol');
+		this.e_svg.appendChild(this.layer_symbol);		
+		
+		this.layer_points = document.createElementNS(SVG_NS,'g');
+		this.layer_points.setAttribute('id','my_points');
+		this.layer_points.setAttribute('class','c_points');
+		this.e_svg.appendChild(this.layer_points);		
+		
+		this.layer_hit_area = document.createElementNS(SVG_NS,'g');
+		this.layer_hit_area.setAttribute('id','my_hit_area');
+		this.layer_hit_area.setAttribute('class','c_point_hit_area');
+		this.e_svg.appendChild(this.layer_hit_area);	
+		
+		//{{tools layer
+		this.layer_tools = document.createElementNS(SVG_NS,'g');
+		this.layer_tools.setAttribute('id','my_tools');
+		this.layer_tools.setAttribute('class','c_tools');
+		this.e_svg.appendChild(this.layer_tools);		
+		
+		this.layer_tools_scale = document.createElementNS(SVG_NS,'g');	//scale 
+		
+		if( this.desktop ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this._vb_scale_x) + ')' );		
+		}
+		else if( this.mobile ){
+			this.layer_tools_scale.setAttribute('transform','scale(' + String(this.ratio*this._vb_scale_x) + ')' );		
+		}
+		this.layer_tools.appendChild(this.layer_tools_scale);						
+
+		//magnet
+		this.reg_magnet_icon( this.layer_tools_scale );	// 자석 아이콘 등록
+
+		let icon_magnet_hit = document.createElementNS(SVG_NS,'g');
+		icon_magnet_hit.setAttribute('transform','translate(5,5)');
+		this.layer_tools_scale.appendChild(icon_magnet_hit);				
+
+		this.tool_magnet = document.createElementNS(SVG_NS,'rect');
+		this.tool_magnet.setAttribute('fill-opacity','0.5');	//fill-opacity:	0;
+		this.tool_magnet.setAttribute('x','0');
+		this.tool_magnet.setAttribute('y','0');
+		this.tool_magnet.setAttribute('width','30');
+		this.tool_magnet.setAttribute('height','30');	
+		//this.layer_tools.appendChild( this.tool_magnet );
+		//this.layer_tools_scale.appendChild( this.tool_magnet );
+		icon_magnet_hit.appendChild( this.tool_magnet );
+	
+		
+		//}}	
+		
+		//{{grid
+		this.reg_grid_icon( this.layer_tools_scale );
+		
+		this.layer_tools_grid_translate = document.createElementNS(SVG_NS,'g');
+		this.layer_tools_grid_translate.setAttribute('transform','translate(5,40)');
+		//this.layer_tools.appendChild(this.layer_tools_grid_translate);
+		this.layer_tools_scale.appendChild(this.layer_tools_grid_translate); 
+		
+		this.tool_grid = document.createElementNS(SVG_NS,'rect');
+		this.tool_grid.setAttribute('fill-opacity','0.2');	//fill-opacity:	0;
+		this.tool_grid.setAttribute('x','0');
+		this.tool_grid.setAttribute('y','0');
+		this.tool_grid.setAttribute('width','30');
+		this.tool_grid.setAttribute('height','30');	
+		this.layer_tools_grid_translate.appendChild( this.tool_grid );
+		//}}		
+		
+		this.X_axis = document.createElementNS(SVG_NS,'line');
+		this.X_axis.setAttribute('id','line1');
+		//this.X_axis.setAttribute('x1','0');
+		//this.X_axis.setAttribute('y1','200');
+		//this.X_axis.setAttribute('x2','400');
+		//this.X_axis.setAttribute('y2','200');
+		
+		//{{
+		//this.X_axis.setAttribute('x1',String(this._vb_x_min));
+		////this.X_axis.setAttribute('y1',String(this._vb_curr_oY));
+		//this.X_axis.setAttribute('y1',String(this._Oy));
+		//
+		////this.X_axis.setAttribute('x2',String(this._vb_x_min+this._vb_width ));
+		//this.X_axis.setAttribute('x2',String(this._vb_x_max ));
+		////this.X_axis.setAttribute('y2',String(this._vb_curr_oY));
+		//this.X_axis.setAttribute('y2',String(this._Oy));
+		//}}
+		this.layer_axis.appendChild(this.X_axis);
+
+		this.Y_axis = document.createElementNS(SVG_NS,'line');
+		this.Y_axis.setAttribute('id','line2');
+		//this.Y_axis.setAttribute('x1','200');
+		//this.Y_axis.setAttribute('y1','0');
+		//this.Y_axis.setAttribute('x2','200');
+		//this.Y_axis.setAttribute('y2','400');
+		//this.Y_axis.setAttribute('x1',String(this._vb_curr_oX));
+		//{{
+		//this.Y_axis.setAttribute('x1',String(this._Ox));
+		//this.Y_axis.setAttribute('y1',String(this._vb_y_min));
+		////this.Y_axis.setAttribute('x2',String(this._vb_curr_oX));
+		//this.Y_axis.setAttribute('x2',String(this._Ox));
+		//this.Y_axis.setAttribute('y2',String(this._vb_y_max));
+		//}}
+		this.layer_axis.appendChild(this.Y_axis);		
+	
+	}
+	
+	reg_magnet_icon(p_parent){
+		let icon_magnet = document.createElementNS(SVG_NS,'g');
+		icon_magnet.setAttribute('transform','translate(5,5)');
+		p_parent.appendChild(icon_magnet);
+		
+		let magnet_icon = document.createElementNS(SVG_NS,'path');
+		
+		let str = 'M 4 15 V 26 H 10 V 15 A 5 5 0 0 1 15 10 V 4 A 11 11 0 0 0 4 15';
+		magnet_icon.setAttribute('d',str);
+		magnet_icon.setAttribute('stroke','black');
+		magnet_icon.setAttribute('fill','red');
+		icon_magnet.appendChild(magnet_icon);
+		
+		let magnet_icon2 = document.createElementNS(SVG_NS,'path');
+		str = 'M 15 4 A 11 11 0 0 1 26 15 V 26 H 20 V15 A 5 5 0 0 0 15 10';
+		magnet_icon2.setAttribute('d',str);
+		magnet_icon2.setAttribute('stroke','black');
+		magnet_icon2.setAttribute('fill','blue');
+		icon_magnet.appendChild(magnet_icon2);
+	}
+	
+	reg_grid_icon(p_parent){
+		let icon_grid = document.createElementNS(SVG_NS,'g');
+		icon_grid.setAttribute('transform','translate(5,40)');
+		p_parent.appendChild(icon_grid);
+		
+		//let grid_icon = document.createElementNS(SVG_NS,'line');
+		//grid_icon.setAttribute('stroke','black');
+		//grid_icon.setAttribute('stroke-width','5');
+		//grid_icon.setAttribute('fill','black');
+		////grid_icon.setAttribute('class','bg_red');
+		//grid_icon.setAttribute('x1',String(4));
+		//grid_icon.setAttribute('y1',String(7));
+		//grid_icon.setAttribute('x2',String(26));
+		//grid_icon.setAttribute('y2',String(25));
+		//icon_grid.appendChild(grid_icon);
+		
+		//let grid_icon = document.createElementNS(SVG_NS,'rect');
+		let grid_icon = document.createElementNS(SVG_NS,'line');
+		//grid_icon.setAttribute('stroke','black');
+		//grid_icon.setAttribute('stroke-width','2');
+		//grid_icon.setAttribute('stroke-opacity','1');
+		//grid_icon.setAttribute('fill','yellow');
+		grid_icon.setAttribute('class','c_grid_icon');
+		//grid_icon.setAttribute('x',String(0));
+		//grid_icon.setAttribute('y',String(0));
+		//grid_icon.setAttribute('width',String(26));
+		//grid_icon.setAttribute('height',String(25));
+		grid_icon.setAttribute('x1',String(4));
+		grid_icon.setAttribute('y1',String(8));
+		grid_icon.setAttribute('x2',String(26));
+		grid_icon.setAttribute('y2',String(8));
+		
+		icon_grid.appendChild(grid_icon);		
+		
+		//
+		grid_icon = document.createElementNS(SVG_NS,'line');
+		grid_icon.setAttribute('class','c_grid_icon');
+		grid_icon.setAttribute('x1',String(4));
+		grid_icon.setAttribute('y1',String(15));
+		grid_icon.setAttribute('x2',String(26));
+		grid_icon.setAttribute('y2',String(15));
+		icon_grid.appendChild(grid_icon);		
+
+		grid_icon = document.createElementNS(SVG_NS,'line');
+		grid_icon.setAttribute('class','c_grid_icon');
+		grid_icon.setAttribute('x1',String(4));
+		grid_icon.setAttribute('y1',String(22));
+		grid_icon.setAttribute('x2',String(26));
+		grid_icon.setAttribute('y2',String(22));
+		icon_grid.appendChild(grid_icon);	
+
+		grid_icon = document.createElementNS(SVG_NS,'line');
+		grid_icon.setAttribute('class','c_grid_icon');
+		grid_icon.setAttribute('x1',String(8));
+		grid_icon.setAttribute('y1',String(4));
+		grid_icon.setAttribute('x2',String(8));
+		grid_icon.setAttribute('y2',String(26));
+		icon_grid.appendChild(grid_icon);	
+
+		grid_icon = document.createElementNS(SVG_NS,'line');
+		grid_icon.setAttribute('class','c_grid_icon');
+		grid_icon.setAttribute('x1',String(15));
+		grid_icon.setAttribute('y1',String(4));
+		grid_icon.setAttribute('x2',String(15));
+		grid_icon.setAttribute('y2',String(26));
+		icon_grid.appendChild(grid_icon);
+
+		grid_icon = document.createElementNS(SVG_NS,'line');
+		grid_icon.setAttribute('class','c_grid_icon');
+		grid_icon.setAttribute('x1',String(22));
+		grid_icon.setAttribute('y1',String(4));
+		grid_icon.setAttribute('x2',String(22));
+		grid_icon.setAttribute('y2',String(26));
+		icon_grid.appendChild(grid_icon);
+
+	}		
 	
 }
 
@@ -4680,23 +5568,54 @@ function init_scs(){
 	
 	//반응영역의 크기(desktop기준)
 	let scr_config={
-		radius:100,
-		r2:100
+		point_r:4,	//점의 크기
+		point_symbol_font_size:15,
+		point_symbol_delta_r:15,	//point symbol - 점이름은 점에서 얼마나 떨어진 거리에 표시되는가
+		
+		len_symbol_font_size:15,
+
+		//'stroke-dasharray','10 2');
+		len_arc_stroke_dash1:5,
+		len_arc_stroke_dash2:1,
+
+		//'stroke-width','2');		
+		len_arc_stroke_width:1,
+		
+		arc_symbol_font_size:15,
+		
+		line_stroke_width:2
+		
 	}
 	
-	let env={
-		div_name:'svg_wrapper',
+	//해당 페이지에서 이용하는 세팅
+	let env_config={
+		//div_name:'svg_wrapper',
+		div_name:'sw',
 		width:400,
 		height:400,
 		
-		mobile_width:400,
+		pixelsPerOne:100,	//1은 몇 pixel인가
+		gridSize:1,			//ct 1마다 grid를 그려라.
+		scale:0,
 		
+		//origin_mode:ORIGIN_USERDEFINED,	//-> 이거해선, origin_x,origin_y 세팅해줘야함
+		//origin_mode:ORIGIN_CENTER,	//origin_x,origin_y 세팅 불필요
+		origin_mode:ORIGIN_QUAD1,
+		origin_x:0,
+		origin_y:400,		
+		
+		////////////////////////////////////////////////
+		mobile_ratio:2,
+		
+		mobile_flag:false, //이걸 세팅하면 , mobile_width/mobile_height를 이용해서 svg 크기를 만듬		
+		mobile_width:400,
+		mobile_height:400
 	}
 	
-	g_config = new c_config();
-	g_config.inpt_div_name = 'svg_wrapper';
-	g_config.inpt_width    = 400;
-	g_config.inpt_height   = 400;
+	g_config = new c_config(env_config,scr_config);
+	//g_config.inpt_div_name = 'svg_wrapper';
+	//g_config.inpt_width    = 400;
+	//g_config.inpt_height   = 400;
 	
 	//customzing
 	let cstmz = {
@@ -4729,7 +5648,11 @@ function init_scs(){
 	gscr = new c_scr_ox();
 	//{{debug
 	gscr.init2(g_config);
+	//gscr.init3();
+	//gscr.init4();
 	//}}debug
+	
+	return;
 	
 	gscr.init('mysvg',
 		cstmz.width,
@@ -4786,8 +5709,10 @@ function initialize_routine(){
 
 	
 	g_trg = new c_triangle(gscr,A_xy.x,A_xy.y,B_xy.x,B_xy.y,C_xy.x,C_xy.y);
-	
+
 	//debugger;
+			//info_update('scr size:' + String(this.platform.width) + ' x ' + String(this.platform.height) );		
+			
 	let str = '';
 	str += '08:49 ';
 	str += '<br>';
