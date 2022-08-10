@@ -81,7 +81,7 @@ function init_scs(){
 	let env_config={
 		div_ID:'sw',
 
-		width:400,
+		width:490,
 		height:400,
 		
 		//Debug
