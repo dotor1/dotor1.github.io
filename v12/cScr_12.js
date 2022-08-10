@@ -146,7 +146,8 @@ class cSCR{
 		this.update_debug_info('debug_mobile' , this.oConfig.platform.mobile );	
 		this.update_debug_info('debug_portrait' , this.oConfig.platform.portrait );	
 		this.update_debug_info('debug_broswer_WH' , String(this.oConfig.platform.width) + ' x ' + String(this.oConfig.platform.height)  );	
-		this.update_debug_info('debug_SCR_WH' , String(this.oConfig.scr_width) + ' x ' + String(this.oConfig.scr_height)  );	
+		this.update_debug_info('debug_SCR_WH' , String(this.oConfig.scr_width) + ' x ' + String(this.oConfig.scr_height)  );
+		this.update_debug_info('debug_win_scr_WH' , String(window.screen.width) + ' x ' + String(window.screen.height)  );	
 		this.update_debug_info('debug_platform_ratio' , String(this.oConfig.platform_ratio)  );	
 		this.update_debug_info('debug_devicePixelRatio' , String(window.devicePixelRatio) );	
 		this.update_debug_info('debug_grid' , String(this.oConfig.Xaxis_grid_size_vbcs) + ' x ' +String(this.oConfig.Yaxis_grid_size_vbcs) );	
