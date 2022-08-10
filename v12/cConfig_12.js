@@ -499,8 +499,8 @@ class cPlatform{
 			this.height = window.innerHeight;
 		}
 		else if( this.mobile ){
-			this.width  = window.screen.width;
-			this.height = window.screen.height;			
+			this.width  = window.innerWidth;
+			this.height = window.innerHeight;			
 			
 			if( this.height > this.landscape ){
 				this.portrait  = true;
