@@ -1,0 +1,251 @@
+<html lang="ko"> 
+	<head>
+		<meta charset="utf-8">
+		<title>[Lab] Logo 작업용</title>
+	
+		<link rel='stylesheet' href='css1.css'   title='CSS1'>
+		<link rel='stylesheet' href='css_tb.css' > <!-- 여기에 title 넣었더니, 이 스타일시트가 아예 안먹음 -->
+		
+		<!-- ver.1.0 파일분리 -->
+		<script type = "text/javascript" src = "scUtil_16.js"></script>
+		<script type = "text/javascript" src = "cScr_16.js"></script>
+		<script type = "text/javascript" src = "cConfig_16.js"></script>
+		<script type = "text/javascript" src = "cPoint_16.js"></script>
+		<script type = "text/javascript" src = "cLine_16.js"></script>
+		<script type = "text/javascript" src = "cAngle_16.js"></script>
+		<script type = "text/javascript" src = "main_16.js"></script>
+		<script type = "text/javascript" src = "cTriangle_16.js"></script>
+		<script type = "text/javascript" src = "cBezier_16.js"></script>
+		<script type = "text/javascript" src = "cLogo_16.js"></script>
+		<script type = "text/javascript" src = "cCopyright_16.js"></script>
+		
+<!--
+#######################################################################
+#                                                                     #
+#	Script                                                            #
+#                                                                     #
+-->			
+		<script>
+			window.onload = function(){ 
+				//{{이름변경
+				//initialize_routine(); 
+				//}}{{
+				main();
+				//}}
+			}
+		</script>
+<!--
+#                                                                     #
+#	Script                                                            #
+#                                                                     #
+#######################################################################
+-->			
+	</head> 
+	<!-- <body style='margin:50px;'> -->
+	<body style='margin:0px;'>
+<!--
+#######################################################################
+#                                                                     #
+#    BODY                                                             #
+#                                                                     #
+-->
+
+
+<!-- sw:svg_wrapper : init_scs에, 이 div name을 parameter로 전달해야 한다.-->
+<div id='sw'>
+</div>
+
+<div id='debug'>
+	<p id='info'></p>
+</div>
+
+<!-- 2022.08.12 -->
+<!-- <canvas id="sw_canvas" width=100 height=100 style="background-color:#cc00ff;"> --> <!-- magenta -->
+<!-- <canvas id="sw_canvas" width=100 height=100 style="background-color:#f5f5e5;"> --> <!-- 누리끼리 -->
+<!-- <canvas id="sw_canvas" width=100 height=100 style="background-color:#FFFCA4;"> --> <!-- #F5F1BF -->
+<!-- canvas: img screenshot용 -->
+<canvas id="sw_canvas" width=100 height=100 style="background-color:#FFFFFF;"> --> <!-- #F5F1BF -->
+</canvas>
+
+<div style='width:674px; background:blue;'>
+	674px
+</div>
+
+<!--
+<div style='width:815px; background:blue;'>
+	ss
+</div>
+<div style='width:824px; background:red;'>
+	ss
+</div>
+-->
+
+<!-- 화면에 html page가 넘쳐야 스크롤이 정상으로 되는지 확인가능 -->
+<div>
+1<br>
+2<br>
+3<br>
+4<br>
+5<br>
+6<br>
+7<br>
+8<br>
+9<br>
+10<br>
+</div>
+
+
+<!-- comment section
+#######################################################################
+
+<div id='svg_wrapper'>
+</div>
+
+
+<div style='width:200px; height:200px; background:blue;'>
+	ss
+</div>
+
+
+<svg id='mysvg2' xmlns="http://www.w3.org/2000/svg"
+	width="400" height="400" viewBox="0 0 400 400">
+</svg>
+
+<BR>
+<BR>
+
+<svg id='mysvg2' xmlns="http://www.w3.org/2000/svg"
+	width="400" height="400" viewBox="0 0 400 400">
+</svg>
+
+
+<svg id='mysvg' >
+
+</svg>
+
+
+	<g id='t1' transform='translate(300,100)' >
+		<g id='t2'>
+			<text id='tt' text-anchor='middle' dominant-baseline='middle'>ABCD1234</text>
+		</g>
+		
+		<g id='t3'>
+			<rect id='t99' x='0' y='0' width='100' height='50' class='c1'/>		
+		</g>
+	</g>
+	
+	<path id='arc1' class='bg_red'></path>
+	<path id='arc2' class='bg_red'></path>
+
+
+	<g id='t1' transform='translate(300,100)' >
+		<g id='t2'>
+			<text id='tt' text-anchor='middle' dominant-baseline='middle'>ABCD1234</text>
+		</g>
+		
+		<g id='t3'>
+			<rect id='t99' x='0' y='0' width='100' height='50' class='c1'/>		
+		</g>
+	</g>
+	
+	<path id='arc1' class='bg_red'></path>
+	<path id='arc2' class='bg_red'></path>
+
+#######################################################################
+comment section  -->  
+
+<!--
+<div id='debug_table'>
+	<table>
+		<tr>
+			<td>mouse move</td>
+			<td>offsetX</td>
+			<td><p id='debug_offsetX1'></p></td>
+		</tr>
+		<tr>
+			<td>mouse move</td>
+			<td>pageX</td>
+			<td><p id='debug_pageX1'></p></td>
+		</tr>
+
+		<tr>
+			<td>offsetLeft</td>
+			<td></td>
+			<td><p id='debug_offsetLeft1'></p></td>
+		</tr>		
+
+		<tr>
+			<td>offsetTop</td>
+			<td></td>
+			<td><p id='debug_offsetTop1'></p></td>
+		</tr>		
+		
+	</table>
+</div>	
+-->
+
+
+<!-- <div id='svg_wrapper' style='width:400; height:400; background:red;'> -->
+<!-- <div id='svg_wrapper' style='width:400; height:400; background:transparent;'> -->
+
+<!--
+<div id='svg_wrapper' style='background:transparent;'>
+	<svg id='mysvg' ></svg>
+</div>
+-->
+
+<!--  
+a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>  
+ -->
+
+<!--
+<svg id='mysvg' xmlns="http://www.w3.org/2000/svg"
+	width="400" height="400" viewBox="0 0 400 400">
+-->	
+<!--
+<svg id='mysvg' xmlns="http://www.w3.org/2000/svg"
+	width='100' height='100' viewBox="0 0 400 400">
+-->	
+	
+	<!-- bg -->
+	<!--
+	<circle id='a_angle' cx='0' cy='100' r='10' class='bg_blue' />
+	-->
+	
+	<!--
+	<circle id='ccc' cx='200' cy='200' r='100' class='bg_gray' />
+	-->
+	
+	
+	<!-- magenta CCW:작은거-->	
+	<!--
+	<path id='path1' class='bg_fill_magenta' d='
+		M 100 200 
+		A 150 150, 
+		  0,         
+		  0,         
+		  0,			
+		  300,200'
+		/>		
+	-->
+	
+	<!--
+	<g id='xxxx' transform='translate(200,200)'>
+		<text id='yyyy' class='c_symbol_text'>M</text>
+	</g>
+	-->
+	
+	<!-- Layer: Grid -->
+	<!-- Layer: Axis -->
+
+<!--
+#                                                                     #
+#    BODY                                                             #
+#                                                                     #
+#######################################################################
+-->		
+	</body>	
+</html>
+
+
+

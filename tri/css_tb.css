@@ -1,0 +1,9 @@
+/* 주석 */
+
+/* Grid Syle */
+table,td,th{
+  border : 1px solid black;
+  border-collapse : collapse;
+  padding: 3px 10px 3px 10px;
+}
+
