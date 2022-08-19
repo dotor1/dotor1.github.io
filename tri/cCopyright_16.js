@@ -178,8 +178,8 @@ class cCopyright{
 	update_position(){
 		//return;
 		
-		let x_vbcs = this.oSCR.vbcs_x_max - this.width*this.oSCR.vbcs_scale  - this.margin*this.oSCR.vbcs_scale;
-		let y_vbcs = this.oSCR.vbcs_y_max - this.height*this.oSCR.vbcs_scale - this.margin*this.oSCR.vbcs_scale;
+		let x_vbcs = this.oSCR.vbcs_x_max - this.width*this.oSCR.oConfig.platform_ratio*this.oSCR.vbcs_scale  - this.margin*this.oSCR.oConfig.platform_ratio*this.oSCR.vbcs_scale;
+		let y_vbcs = this.oSCR.vbcs_y_max - this.height*this.oSCR.oConfig.platform_ratio*this.oSCR.vbcs_scale - this.margin*this.oSCR.oConfig.platform_ratio*this.oSCR.vbcs_scale;
 		
 		this.seL1Layer_transport.setAttribute('transform','translate(' + String(x_vbcs) +  ',' + String(y_vbcs) + ')' )					
 	}
