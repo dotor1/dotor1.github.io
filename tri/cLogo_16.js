@@ -376,12 +376,23 @@ class cLogo{
 	
 	//note.#871
 	update_position(){
+
+		//
+		let img_shorter = 0;	//width,height중에 짧은 쪽
+		if( this.oSCR.oConfig.scr_height >  this.oSCR.oConfig.scr_width ){
+			img_shorter =  this.oSCR.oConfig.scr_width;
+		}
+		else{
+			img_shorter = this.oSCR.oConfig.scr_height;
+		}		
+		
+		let logo_size = img_shorter / 2;
 		
 		//img size
 		//scale : 1 -> 200x200
 		//scale : 2 -> 400x400
-		let x_vbcs = (this.oSCR.vbcs_width  - 200*this.oSCR.vbcs_scale )/2 + this.oSCR.vbcs_x_min;
-		let y_vbcs = (this.oSCR.vbcs_height - 200*this.oSCR.vbcs_scale )/2 + this.oSCR.vbcs_y_min;
+		let x_vbcs = (this.oSCR.vbcs_width  - logo_size*this.oSCR.vbcs_scale )/2 + this.oSCR.vbcs_x_min;
+		let y_vbcs = (this.oSCR.vbcs_height - logo_size*this.oSCR.vbcs_scale )/2 + this.oSCR.vbcs_y_min;
 		
 		this.seL1Layer_transport.setAttribute('transform','translate(' + String(x_vbcs) +  ',' + String(y_vbcs) + ')' )					
 	}
